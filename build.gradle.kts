@@ -13,7 +13,7 @@ repositories {
 
 dependencies {
     testImplementation(kotlin("test"))
-    implementation("dev.or2:all:2.0.8")
+    implementation("dev.or2:all:2.0.11")
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.9.0")
     implementation("org.jsoup:jsoup:1.15.3")
     implementation("org.sweble.wikitext:swc-engine:3.1.9")

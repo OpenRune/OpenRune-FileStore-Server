@@ -1,28 +1,48 @@
 package dev.openrune.dev.openrune.wiki.dumpers.impl
 
-import com.google.gson.JsonElement
-import com.google.gson.JsonObject
-import com.google.gson.JsonSerializationContext
-import com.google.gson.JsonSerializer
+import com.google.gson.*
+import com.google.gson.reflect.TypeToken
 import dev.openrune.dev.openrune.wiki.EncodingSettings
 import dev.openrune.dev.openrune.wiki.Wiki
 import dev.openrune.dev.openrune.wiki.dumpers.Dumper
 import dev.openrune.dev.openrune.wiki.dumpers.extractIds
 import dev.openrune.dev.openrune.wiki.dumpers.extractValueField
 import java.lang.reflect.Type
+import java.nio.file.Path
 
 data class InfoBoxItem(
-    var linkedIds : List<Int> = emptyList(),
-    val examine : String,
-    val cost : Int,
-    val destroy : String,
-    val alchable : Boolean = true
+    var linkedIds: List<Int>? = null,
+    val examine: String,
+    val cost: Int = -1,
+    val destroy: String,
+    val alchable: Boolean = true
 ) {
     override fun hashCode(): Int {
         return (examine.hashCode() * 31 + cost.hashCode()) * 31 +
                 destroy.hashCode() * 31 +
                 alchable.hashCode()
     }
+
+    companion object {
+        fun load(items: Path): Map<Int, InfoBoxItem> {
+            val type = object : TypeToken<Map<Int, InfoBoxItem>>() {}.type
+            val original = Gson().fromJson<Map<Int, InfoBoxItem>>(items.toFile().readText(), type)
+
+            val flatMap = mutableMapOf<Int, InfoBoxItem>()
+
+            for ((id, item) in original) {
+                flatMap[id] = item
+                if (!item.linkedIds.isNullOrEmpty()) {
+                    for (linkedId in item.linkedIds!!) {
+                        flatMap[linkedId] = item
+                    }
+                }
+            }
+
+            return flatMap
+        }
+    }
+
 }
 
 class InfoBoxItemSerializer : JsonSerializer<InfoBoxItem> {
@@ -30,19 +50,19 @@ class InfoBoxItemSerializer : JsonSerializer<InfoBoxItem> {
         val jsonObject = JsonObject()
 
         // Only add fields if they are not default values
-        if (src.linkedIds.isNotEmpty()) {
+        if (!src.linkedIds.isNullOrEmpty()) {
             jsonObject.add("linkedIds", context.serialize(src.linkedIds))
         }
         if (src.examine.isNotEmpty()) {
             jsonObject.add("examine", context.serialize(src.examine))
         }
-        if (src.cost != 0) {
+        if (src.cost != -1) {
             jsonObject.add("cost", context.serialize(src.cost))
         }
         if (src.destroy.isNotEmpty()) {
             jsonObject.add("destroy", context.serialize(src.destroy))
         }
-        if (src.alchable != true) {  // Only add if it's not the default value (true)
+        if (!src.alchable) {  // Only add if it's not the default value (true)
             jsonObject.add("alchable", context.serialize(src.alchable))
         }
 
@@ -54,18 +74,16 @@ class InfoBoxItemSerializer : JsonSerializer<InfoBoxItem> {
 class Items : Dumper {
 
     override fun name() = "items"
-
     var items = mutableMapOf<Int, InfoBoxItem>()
 
     override fun parseItem(wiki: Wiki) {
-        val items = mutableMapOf<Int, InfoBoxItem>()
+        val parsedItems = mutableMapOf<Int, InfoBoxItem>()
 
         wiki.pages
             .asSequence()
-            .filter { it.namespace.key == 0 } // Mainspace only
+            .filter { it.namespace.key == 0 }
             .filter { it.revision.text.contains("infobox item", ignoreCase = true) }
             .forEach { page ->
-
                 val templates = page.getTemplateMaps("infobox item")
                 if (templates.isEmpty()) return@forEach
 
@@ -80,55 +98,52 @@ class Items : Dumper {
 
                 ids.forEach { (id, keyIndex) ->
                     val examine = extractValueField("examine", template, keyIndex).orEmpty()
-                    val cost = extractValueField("value", template, keyIndex)?.toIntOrNull() ?: 0
+                    val cost = extractValueField("value", template, keyIndex)?.toIntOrNull() ?: -1
                     val destroy = extractValueField("destroy", template, keyIndex).orEmpty()
-                    var alchable = true
 
-                    if (template.contains("alchable")) {
+                    var alchable = true
+                    if ("alchable" in template) {
                         alchable = extractValueField("alchable", template, keyIndex) == "Yes"
                     }
-
-                    if (cost == 0) {
-                        alchable = false
-                    }
-
-
+                    if (cost == 0) alchable = false
 
                     val newItem = InfoBoxItem(emptyList(), examine, cost, destroy, alchable)
-                    val existingEntry = items.entries.find { it.value.hashCode() == newItem.hashCode() }
+                    val existing = parsedItems.entries.find { it.value.hashCode() == newItem.hashCode() }
 
-                    if (existingEntry != null) {
-                        val existingItem = existingEntry.value
-                        if (existingEntry.key != id && id !in existingItem.linkedIds) {
-                            items[existingEntry.key] = existingItem.copy(linkedIds = existingItem.linkedIds + id)
+                    if (existing != null) {
+                        val existingItem = existing.value
+                        if (existing.key != id && id !in (existingItem.linkedIds ?: emptyList())) {
+                            parsedItems[existing.key] = existingItem.copy(
+                                linkedIds = (existingItem.linkedIds ?: emptyList()) + id
+                            )
                         }
                     } else {
-                        items[id] = newItem
+                        parsedItems[id] = newItem
                     }
-
                 }
-
             }
 
-        this.items = items
+        this.items = parsedItems
     }
 
-    override fun toWrite(encodingSettings : EncodingSettings): Any {
-
+    override fun toWrite(encodingSettings: EncodingSettings): Any {
         if (!encodingSettings.linkedIds) {
             val updates = mutableMapOf<Int, InfoBoxItem>()
-            items.forEach { entry ->
-                val linkedIds = entry.value.linkedIds
+
+            items.forEach { (id, item) ->
+                val linkedIds = item.linkedIds.orEmpty()
                 if (linkedIds.isNotEmpty()) {
-                    entry.value.linkedIds = emptyList()
-                    val copy = entry.value.copy()
-                    linkedIds.forEach { updates[it] = copy }
+                    val clearedItem = item.copy(linkedIds = emptyList())
+                    linkedIds.forEach { linkedId -> updates[linkedId] = clearedItem }
                 }
             }
 
-            updates.forEach { (id, copiedItem) -> items[id] = copiedItem }
+            updates.forEach { (id, copiedItem) ->
+                items[id] = copiedItem
+            }
         }
 
-        return items.toList().sortedBy { it.first }.toMap().toMutableMap()
+        return items.toSortedMap()
     }
+
 }

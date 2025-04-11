@@ -4,7 +4,8 @@ import dev.openrune.OsrsCacheProvider
 import dev.openrune.cache.CacheManager
 import dev.openrune.cache.CacheStore
 import dev.openrune.definition.Definition
-import dev.openrune.dev.openrune.server.impl.ItemServerType
+import dev.openrune.server.impl.ItemServerType
+import dev.openrune.dev.openrune.wiki.dumpers.impl.InfoBoxItem
 import dev.openrune.filesystem.Cache
 import java.nio.file.Path
 
@@ -13,10 +14,12 @@ object ServerCacheManager {
     private val combinedItems = mutableMapOf<Int, ItemServerType>()
 
     @JvmStatic
-    fun init(dataSources : CacheStore,npcs : Path) {
+    fun init(dataSources : CacheStore,items : Path) {
         CacheManager.init(dataSources)
-        combinedItems.forEach { it.value.load() }
 
+        val itemsData = InfoBoxItem.load(items)
+        CacheManager.getItems().forEach { (key, value) -> combinedItems[key] = ItemServerType.load(key, itemsData[key], value) }
+        println(combinedItems.size)
     }
 
     fun getItem(id: Int) = combinedItems[id]
@@ -44,7 +47,8 @@ object ServerCacheManager {
 
 fun main(args: Array<String>) {
     ServerCacheManager.init(
-        OsrsCacheProvider(Cache.load(Path.of(""), false)),
-        Path.of("items-full.json")
-    );
+        OsrsCacheProvider(Cache.load(Path.of("E:\\RSPS\\Illerai\\Cadarn-Server\\data\\cache"), false),230),
+        Path.of("./items.json")
+    )
+    println(ServerCacheManager.getItemOrDefault(995).name)
 }
