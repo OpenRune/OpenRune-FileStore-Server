@@ -1,4 +1,4 @@
-package dev.openrune.dev.openrune.wiki.dumpers
+package dev.openrune.wiki.dumpers
 
 import dev.openrune.dev.openrune.wiki.EncodingSettings
 import dev.openrune.dev.openrune.wiki.Wiki

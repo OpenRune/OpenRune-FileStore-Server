@@ -40,10 +40,10 @@ bin/
 
 ### Mac OS ###
 .DS_Store
-*.xml
 *.bz2
 wiki.xml
 kk.json
 *.toml
 *.json
 /dumps/230/cache
+/.idea

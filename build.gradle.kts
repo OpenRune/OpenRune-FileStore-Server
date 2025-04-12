@@ -29,6 +29,10 @@ dependencies {
     // https://mvnrepository.com/artifact/com.google.code.gson/gson
     implementation("com.google.code.gson:gson:2.12.1")
     implementation("com.moandjiezana.toml:toml4j:0.7.2")
+    implementation("org.jsoup:jsoup:1.16.1")
+    implementation("org.openjdk.jol:jol-core:0.16")
+    implementation("io.github.oshai:kotlin-logging-jvm:7.0.3")
+    implementation("me.tongfei:progressbar:0.9.5")
 }
 
 tasks.test {

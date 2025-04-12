@@ -1,12 +1,18 @@
-package dev.openrune.dev.openrune.server
+package dev.openrune.server
 
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import dev.openrune.OsrsCacheProvider
 import dev.openrune.cache.CacheManager
 import dev.openrune.cache.CacheStore
 import dev.openrune.definition.Definition
+import dev.openrune.server.ServerCacheManager.getItem
 import dev.openrune.server.impl.ItemServerType
-import dev.openrune.dev.openrune.wiki.dumpers.impl.InfoBoxItem
+import dev.openrune.wiki.dumpers.impl.InfoBoxItem
 import dev.openrune.filesystem.Cache
+import dev.openrune.server.impl.ItemRenderDataManager
+import org.openjdk.jol.info.GraphLayout
+import java.io.File
 import java.nio.file.Path
 
 object ServerCacheManager {
@@ -16,13 +22,25 @@ object ServerCacheManager {
     @JvmStatic
     fun init(dataSources : CacheStore,items : Path) {
         CacheManager.init(dataSources)
+        ItemRenderDataManager.init()
 
         val itemsData = InfoBoxItem.load(items)
         CacheManager.getItems().forEach { (key, value) -> combinedItems[key] = ItemServerType.load(key, itemsData[key], value) }
-        println(combinedItems.size)
+
+        logCombinedItemsMemoryUsage()
+
+        ItemRenderDataManager.clear()
+    }
+    fun logCombinedItemsMemoryUsage() {
+        println("Estimating memory usage of combinedItems...")
+        val layout = GraphLayout.parseInstance(combinedItems)
+        println("Total size: ${layout.totalSize()} bytes")
+        println("Item count: ${combinedItems.size}")
+        println("Size per item (approx): ${layout.totalSize() / combinedItems.size} bytes")
     }
 
     fun getItem(id: Int) = combinedItems[id]
+    fun getItems() = combinedItems
     fun getItemOrDefault(id: Int) = getOrDefault(combinedItems, id, ItemServerType(), "Item")
 
     private fun <T : Definition> applyIdOffset(definitions: MutableMap<Int, T>, offset: Int): MutableMap<Int, T> {
@@ -47,8 +65,9 @@ object ServerCacheManager {
 
 fun main(args: Array<String>) {
     ServerCacheManager.init(
-        OsrsCacheProvider(Cache.load(Path.of("E:\\RSPS\\Illerai\\Cadarn-Server\\data\\cache"), false),230),
+        OsrsCacheProvider(Cache.load(Path.of("E:\\RSPS\\Illerai\\Cadarn-Server\\data\\cache"), false), 230),
         Path.of("./items.json")
     )
-    println(ServerCacheManager.getItemOrDefault(995).name)
+
+    File("testView.json").writeText(GsonBuilder().setPrettyPrinting().create().toJson(ServerCacheManager.getItems()))
 }
