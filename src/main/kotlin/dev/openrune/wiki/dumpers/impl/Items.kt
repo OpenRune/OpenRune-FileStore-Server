@@ -122,18 +122,17 @@ class Items : Dumper {
                         it.revision.text.contains("CombatStyles", ignoreCase = true)
             }
 
-        val pb = ProgressBarBuilder().setInitialMax((wiki.pages.size + 2).toLong()).setTaskName("Dumping Items").build()
+        val pb = ProgressBarBuilder().setInitialMax((pages.count() + 3).toLong()).setTaskName("Dumping Items").build()
 
         pb.extraMessage = "Fetching Prices"
-        val pricesInstances = GrandExchangePrices()
-        pricesInstances.fetchLatestPrices()
+        val prices = GrandExchangePrices()
+        prices.fetchLatestPrices()
         pb.step()
-        val prices = pricesInstances.getAllPrices()
         pb.extraMessage = "Fetching Item Req"
         val skillReq = ItemRequirementsManager()
         skillReq.load()
         pb.step()
-        pb.extraMessage = "Writing Items"
+        pb.extraMessage = "Processing Item Pages"
         pages.forEach { page ->
             val templatesInfoBox = page.getTemplateMaps("infobox item")
             if (templatesInfoBox.isEmpty()) return@forEach
@@ -187,7 +186,7 @@ class Items : Dumper {
                 val skillReqMap = skillReq.getRequirementsForItem(id)
 
                 val newItem = InfoBoxItem(
-                    emptyList(), examine, cost, prices[id]?.high ?: -1, destroy, alchable, attackRangeTemp, combatStyle,
+                    emptyList(), examine, cost, prices.getPriceData(id), destroy, alchable, attackRangeTemp, combatStyle,
                     skillReqMap ?: emptyMap()
                 )
                 val existing = parsedItems.entries.find { it.value.hashCode() == newItem.hashCode() }
@@ -205,7 +204,6 @@ class Items : Dumper {
             }
             pb.step()
         }
-
         pb.close()
         this.items = parsedItems
     }

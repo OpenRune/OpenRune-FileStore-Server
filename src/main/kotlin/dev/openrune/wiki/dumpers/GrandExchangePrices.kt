@@ -55,7 +55,7 @@ class GrandExchangePrices {
         }
     }
 
-    fun getPriceData(itemId: Int): PriceData? = prices[itemId]
+    fun getPriceData(itemId: Int): Int = if (prices.containsKey(itemId)) prices[itemId]?.high?: 0 else 0
 
     fun getAllPrices(): Map<Int, PriceData> = prices
 }
