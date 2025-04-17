@@ -1,6 +1,10 @@
 package dev.openrune.wiki.dumpers
 
-import dev.openrune.server.impl.*
+import dev.openrune.server.impl.item.AttackType
+import dev.openrune.server.impl.item.CombatStyle
+import dev.openrune.server.impl.item.CombatStyleEntry
+import dev.openrune.server.impl.item.FightStyle
+import dev.openrune.server.impl.item.LevelBoost
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import java.io.File
@@ -70,10 +74,10 @@ object WeaponTypesTable  {
                 .mapNotNull { experienceTypeMap[it] }
 
             CombatStyleEntry(
-                combatStyle = CombatStyle.valueOf(styleName.uppercase().replace(" ","_")),
-                attackType = AttackType.valueOf(attackType.uppercase().replace(" ","_")),
-                fightStyle = FightStyle.valueOf(weaponStyle.uppercase().replace(" ","_")),
-                experience =  experience,
+                combatStyle = CombatStyle.valueOf(styleName.uppercase().replace(" ", "_")),
+                attackType = AttackType.valueOf(attackType.uppercase().replace(" ", "_")),
+                fightStyle = FightStyle.valueOf(weaponStyle.uppercase().replace(" ", "_")),
+                experience = experience,
                 levelBoost = LevelBoost(
                     amount = levelBoostAmount,
                     skills = boostedSkills

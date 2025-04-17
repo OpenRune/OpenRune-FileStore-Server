@@ -5,7 +5,6 @@ import com.google.gson.reflect.TypeToken
 import dev.openrune.cache.CacheManager
 import dev.openrune.dev.openrune.wiki.EncodingSettings
 import dev.openrune.dev.openrune.wiki.Wiki
-import dev.openrune.server.impl.getInt
 import dev.openrune.wiki.dumpers.Dumper
 import dev.openrune.wiki.dumpers.extractIds
 import dev.openrune.wiki.dumpers.extractValueField

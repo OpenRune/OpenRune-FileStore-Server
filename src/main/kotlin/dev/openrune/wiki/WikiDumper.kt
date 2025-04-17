@@ -18,6 +18,7 @@ import dev.openrune.filesystem.Cache
 import dev.openrune.wiki.dumpers.impl.InfoBoxItem
 import dev.openrune.wiki.dumpers.impl.InfoBoxItemSerializer
 import dev.openrune.wiki.dumpers.impl.Items
+import dev.openrune.wiki.dumpers.impl.Objects
 import io.github.oshai.kotlinlogging.KotlinLogging
 import me.tongfei.progressbar.ProgressBar
 import me.tongfei.progressbar.ProgressBarBuilder
@@ -110,8 +111,13 @@ object WikiDumper {
         val wiki = Wiki.load(wikiLocation.path)
         val items = Items()
         logger.info { "Parsing Items..." }
-        items.parseItem(wiki)
+        //items.parseItem(wiki)
+
+        val objects = Objects()
+        logger.info { "Parsing Objects..." }
+        objects.parseItem(wiki)
         writeData(encodingSettings,items.toWrite(encodingSettings), File(getBaseLocation,"items"))
+        writeData(encodingSettings,objects.toWrite(encodingSettings), File(getBaseLocation,"objects"))
     }
 
     fun unzip(zipFile: File, destDir: File): Boolean {

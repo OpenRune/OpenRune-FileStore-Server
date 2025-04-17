@@ -1,8 +1,10 @@
-package dev.openrune.server.impl
+package dev.openrune.server.impl.item
 
-import dev.openrune.cache.CacheManager
+import dev.openrune.definition.Definition
 import dev.openrune.definition.type.ItemType
+import dev.openrune.server.ServerCacheManager
 import dev.openrune.wiki.dumpers.impl.InfoBoxItem
+import kotlin.collections.get
 
 data class Equipment(
     val attackStab: Int = 0,
@@ -41,7 +43,7 @@ data class Weapon(
 )
 
 data class ItemServerType(
-    var id: Int = -1,
+    override var id: Int = -1,
     var examine: String = "",
     var cost: Int = -1,
     var exchangeCost: Int = -1,
@@ -62,8 +64,9 @@ data class ItemServerType(
     var appearanceOverride1: Int = -1,
     var appearanceOverride2: Int = -1,
     var equipment: Equipment? = null,
-    var weapon: Weapon? = null
-) {
+    var weapon: Weapon? = null,
+    var params: MutableMap<Int, Any>? = null
+) : Definition {
     companion object {
         fun load(id: Int, infoBoxItem: InfoBoxItem?, cache: ItemType): ItemServerType {
             return ItemServerType().apply {
@@ -87,6 +90,7 @@ data class ItemServerType(
                 subops = cache.subops
                 appearanceOverride1 = cache.appearanceOverride1
                 appearanceOverride2 = cache.appearanceOverride2
+                params = cache.params
 
                 if (cache.equipSlot != -1) {
                     val params = cache.params
@@ -127,7 +131,7 @@ data class ItemServerType(
                             weaponType = weaponType,
                             weaponTypeRenderData = weaponTypeRenderData,
                             attackRange = params?.takeIf { it.containsKey(13) }?.getInt(13) ?: infoBoxItem?.attackRange ?: 0,
-                            hasSpec = CacheManager.getEnum(906)?.values?.takeIf { it.containsKey(id) } != null
+                            hasSpec = ServerCacheManager.getEnum(906)?.values?.takeIf { it.containsKey(id) } != null
                         )
                     }
                 }
@@ -158,8 +162,8 @@ data class ItemServerType(
 
         skillParamPairs.forEach {
             if (params.containsKey(it.first)) {
-                val statID = CacheManager.getEnum(81)!!.values[params[it.first]]
-                val skill = CacheManager.getEnum(108)!!.values[statID]
+                val statID = ServerCacheManager.getEnum(81)!!.values[params[it.first]]
+                val skill = ServerCacheManager.getEnum(108)!!.values[statID]
                 req[skill.toString().lowercase()] = params.getInt(it.second)
             }
         }

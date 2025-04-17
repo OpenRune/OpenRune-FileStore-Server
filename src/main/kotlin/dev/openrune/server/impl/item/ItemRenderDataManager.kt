@@ -1,6 +1,7 @@
-package dev.openrune.server.impl
+package dev.openrune.server.impl.item
 
 import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import java.io.BufferedReader
 import java.io.InputStreamReader
 
@@ -77,7 +78,7 @@ object ItemRenderDataManager {
             ?: throw IllegalArgumentException("File not found in resources: itemRenderData.json")
         val reader = BufferedReader(InputStreamReader(inputStream))
 
-        val mapType = object : com.google.gson.reflect.TypeToken<Map<Int, WeaponTypeRenderDataFull>>() {}.type
+        val mapType = object : TypeToken<Map<Int, WeaponTypeRenderDataFull>>() {}.type
         val deserializedMap: Map<Int, WeaponTypeRenderDataFull> = gson.fromJson(reader.readText(), mapType)
         weaponTypeRenderDataFullMap.clear()
         weaponTypeRenderDataFullMap.putAll(deserializedMap)

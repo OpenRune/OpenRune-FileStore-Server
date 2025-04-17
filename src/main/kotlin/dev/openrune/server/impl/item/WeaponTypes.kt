@@ -1,4 +1,4 @@
-package dev.openrune.server.impl
+package dev.openrune.server.impl.item
 
 enum class CombatStyle {
     CHOP, SLASH,
