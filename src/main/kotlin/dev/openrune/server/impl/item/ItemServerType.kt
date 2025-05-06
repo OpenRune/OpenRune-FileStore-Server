@@ -7,32 +7,51 @@ import dev.openrune.wiki.dumpers.impl.InfoBoxItem
 import kotlin.collections.get
 
 data class Equipment(
-    val attackStab: Int = 0,
-    val attackSlash: Int = 0,
-    val attackCrush: Int = 0,
-    val attackMagic: Int = 0,
-    val attackRanged: Int = 0,
-    val defenceStab: Int = 0,
-    val defenceSlash: Int = 0,
-    val defenceCrush: Int = 0,
-    val defenceMagic: Int = 0,
-    val defenceRanged: Int = 0,
-    val meleeStrength: Int = 0,
-    val rangedStrength: Int = 0,
-    val rangedEquipmentStrengthBonus: Int = 0,
-    val magicStrength: Int = 0,
-    val magicDamage: Int = 0,
-    val prayer: Int = 0,
-    val demonDamage: Int = 0,
-    val degradeable: Int = 0,
-    val silverStrength: Int = 0,
-    val corpBoost: Int = 0,
-    val golemDamage: Int = 0,
-    val kalphiteDamage: Int = 0,
+    var params: MutableMap<Int, Any>? = null,
     val slot: Int = -1,
-    var equipmentOptions: List<String?> = emptyList(),
     val requirements: Map<String, Int> = emptyMap()
-)
+) {
+    val attackStab get() = params.getInt(0)
+    val attackSlash get() = params.getInt(1)
+    val attackCrush get() = params.getInt(2)
+    val attackMagic get() = params.getInt(3)
+    val attackRanged get() = params.getInt(4)
+    val defenceStab get() = params.getInt(5)
+    val defenceSlash get() = params.getInt(6)
+    val defenceCrush get() = params.getInt(7)
+    val defenceMagic get() = params.getInt(8)
+    val defenceRanged get() = params.getInt(9)
+    val meleeStrength get() = params.getInt(10)
+    val prayer get() = params.getInt(11)
+    val rangedStrength get() = params.getInt(12)
+    val magicStrength get() = params.getInt(299)
+    val rangedEquipmentStrengthBonus get() = params.getInt(189)
+    val magicDamage get() = params.getInt(65)
+    val demonDamage get() = params.getInt(128)
+    val degradeable get() = params.getInt(346)
+    val silverStrength get() = params.getInt(518)
+    val corpBoost get() = params.getInt(701)
+    val golemDamage get() = params.getInt(1178)
+    val kalphiteDamage get() = params.getInt(1353)
+
+    val equipmentOptions get() = getEquipmentOptions(params)
+
+    fun getEquipmentOptions(params: Map<Int, Any>?): List<String?> {
+        if (params == null) return MutableList<String?>(7) { null }
+
+        val equipmentOptions = MutableList<String?>(7) { null }
+
+        for (index in 0..6) {
+            val param = params.getString(451 + index)
+            if (param.isNotEmpty()) {
+                equipmentOptions[index] = param
+            }
+        }
+        return equipmentOptions
+    }
+
+
+}
 
 data class Weapon(
     val attackSpeed: Int = 0,
@@ -95,29 +114,7 @@ data class ItemServerType(
                 if (cache.equipSlot != -1) {
                     val params = cache.params
                     equipment = Equipment(
-                        attackStab = params.getInt(0),
-                        attackSlash = params.getInt(1),
-                        attackCrush = params.getInt(2),
-                        attackMagic = params.getInt(3),
-                        attackRanged = params.getInt(4),
-                        defenceStab = params.getInt(5),
-                        defenceSlash = params.getInt(6),
-                        defenceCrush = params.getInt(7),
-                        defenceMagic = params.getInt(8),
-                        defenceRanged = params.getInt(9),
-                        meleeStrength = params.getInt(10),
-                        prayer = params.getInt(11),
-                        rangedStrength = params.getInt(12),
-                        magicStrength = params.getInt(299),
-                        rangedEquipmentStrengthBonus = params.getInt(189),
-                        magicDamage = params.getInt(65),
-                        demonDamage = params.getInt(128),
-                        degradeable = params.getInt(346),
-                        silverStrength = params.getInt(518),
-                        corpBoost = params.getInt(701),
-                        golemDamage = params.getInt(1178),
-                        kalphiteDamage = params.getInt(1353),
-                        equipmentOptions = getEquipmentOptions(params),
+                        params = params,
                         requirements = getItemRequirements(params).takeIf { it.isNotEmpty() } ?: infoBoxItem?.itemReq?: emptyMap(),
                         slot = cache.equipSlot
                     )
@@ -171,19 +168,6 @@ data class ItemServerType(
         return req
     }
 
-    fun getEquipmentOptions(params: Map<Int, Any>?): List<String?> {
-        if (params == null) return MutableList<String?>(7) { null }
-
-        val equipmentOptions = MutableList<String?>(7) { null }
-
-        for (index in 0..6) {
-            val param = params.getString(451 + index)
-            if (param.isNotEmpty()) {
-                equipmentOptions[index] = param
-            }
-        }
-        return equipmentOptions
-    }
 
     fun isEquippable() = equipment != null
 
