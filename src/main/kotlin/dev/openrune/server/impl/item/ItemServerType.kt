@@ -58,8 +58,10 @@ data class Weapon(
     val weaponTypeRenderData: WeaponTypeRenderData?,
     val weaponType: WeaponTypes = WeaponTypes.UNARMED,
     val attackRange: Int = 0,
-    val hasSpec: Boolean = false
-)
+    val specAmount: Int = -1
+) {
+    fun hasSpec() = specAmount != -1
+}
 
 data class ItemServerType(
     override var id: Int = -1,
@@ -128,7 +130,7 @@ data class ItemServerType(
                             weaponType = weaponType,
                             weaponTypeRenderData = weaponTypeRenderData,
                             attackRange = params?.takeIf { it.containsKey(13) }?.getInt(13) ?: infoBoxItem?.attackRange ?: 0,
-                            hasSpec = ServerCacheManager.getEnum(906)?.values?.takeIf { it.containsKey(id) } != null
+                            specAmount = ServerCacheManager.getEnum(906)?.values?.takeIf { it.containsKey(id) }.getInt(id)
                         )
                     }
                 }
@@ -139,7 +141,6 @@ data class ItemServerType(
     fun findWeaponTypeRenderData(id : Int, weaponType : WeaponTypes) : WeaponTypeRenderData? {
         val renderData = ItemRenderDataManager.getItemRenderAnimationByItem(id)
         if (renderData != null) return renderData.toServer()
-        //println("Missing WeaponTypeRenderData for {${id}, ${weaponType.name}} ")
         return ItemRenderDataManager.getItemRenderAnimationById(weaponType.fallbackRenderID)?.toServer()
     }
 

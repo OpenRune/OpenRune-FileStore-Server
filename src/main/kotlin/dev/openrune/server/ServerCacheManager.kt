@@ -152,9 +152,4 @@ fun main(args: Array<String>) {
         Path.of("./dumps/230/objects.json"),
         OsrsCacheProvider(Cache.load(Path.of("E:\\RSPS\\Illerai\\Cadarn-Server\\data\\cache"), false), 230)
     )
-
-    File("testView.json").writeText(GsonBuilder().setPrettyPrinting().create().toJson(ServerCacheManager.getItems()))
-
-    println(ServerCacheManager.getObject(13287))
-
 }
