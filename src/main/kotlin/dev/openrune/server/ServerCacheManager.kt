@@ -45,7 +45,7 @@ object ServerCacheManager {
         val objectData = InfoBoxObject.load(objects)
 
         data.init()
-        println("Memory before putAll: ${usedMemoryMB()} MB")
+
         npcs.putAll(data.npcs)
 
         varbits.putAll(data.varbits)
@@ -60,8 +60,8 @@ object ServerCacheManager {
 
 
         this.items.putAll(data.items.mapValues { ItemServerType.load(it.key, itemsData[it.key], it.value) })
-        this.objects.putAll(data.objects.mapValues { ObjectServerType.load(it.key, objectData[it.key], it.value)})
-        println("Memory before putAll: ${usedMemoryMB()} MB")
+        this.objects.putAll(data.objects.mapValues { ObjectServerType.load(it.key, objectData[it.key],data.objects) })
+
         ItemRenderDataManager.clear()
     }
 
