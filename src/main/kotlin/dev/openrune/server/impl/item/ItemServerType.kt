@@ -4,53 +4,69 @@ import dev.openrune.definition.Definition
 import dev.openrune.definition.type.ItemType
 import dev.openrune.server.ServerCacheManager
 import dev.openrune.wiki.dumpers.impl.InfoBoxItem
-import kotlin.collections.get
+
+data class EquipmentStats(
+    val attackStab: Int = 0,
+    val attackSlash: Int = 0,
+    val attackCrush: Int = 0,
+    val attackMagic: Int = 0,
+    val attackRanged: Int = 0,
+    val defenceStab: Int = 0,
+    val defenceSlash: Int = 0,
+    val defenceCrush: Int = 0,
+    val defenceMagic: Int = 0,
+    val defenceRanged: Int = 0,
+    val meleeStrength: Int = 0,
+    val prayer: Int = 0,
+    val rangedStrength: Int = 0,
+    val magicStrength: Int = 0,
+    val rangedEquipmentStrengthBonus: Int = 0,
+    val magicDamage: Int = 0,
+    val demonDamage: Int = 0,
+    val degradeable: Int = 0,
+    val silverStrength: Int = 0,
+    val corpBoost: Int = 0,
+    val golemDamage: Int = 0,
+    val kalphiteDamage: Int = 0
+)
 
 data class Equipment(
-    var params: MutableMap<Int, Any>? = null,
     val slot: Int = -1,
-    val requirements: Map<String, Int> = emptyMap()
+    val requirements: Map<String, Int> = emptyMap(),
+    private val paramsProvider: () -> Map<String, Any>?
 ) {
-    val attackStab get() = params.getInt(0)
-    val attackSlash get() = params.getInt(1)
-    val attackCrush get() = params.getInt(2)
-    val attackMagic get() = params.getInt(3)
-    val attackRanged get() = params.getInt(4)
-    val defenceStab get() = params.getInt(5)
-    val defenceSlash get() = params.getInt(6)
-    val defenceCrush get() = params.getInt(7)
-    val defenceMagic get() = params.getInt(8)
-    val defenceRanged get() = params.getInt(9)
-    val meleeStrength get() = params.getInt(10)
-    val prayer get() = params.getInt(11)
-    val rangedStrength get() = params.getInt(12)
-    val magicStrength get() = params.getInt(299)
-    val rangedEquipmentStrengthBonus get() = params.getInt(189)
-    val magicDamage get() = params.getInt(65)
-    val demonDamage get() = params.getInt(128)
-    val degradeable get() = params.getInt(346)
-    val silverStrength get() = params.getInt(518)
-    val corpBoost get() = params.getInt(701)
-    val golemDamage get() = params.getInt(1178)
-    val kalphiteDamage get() = params.getInt(1353)
+    private val cachedParams by lazy { paramsProvider() ?: emptyMap() }
 
-    val equipmentOptions get() = getEquipmentOptions(params)
-
-    fun getEquipmentOptions(params: Map<Int, Any>?): List<String?> {
-        if (params == null) return MutableList<String?>(7) { null }
-
-        val equipmentOptions = MutableList<String?>(7) { null }
-
-        for (index in 0..6) {
-            val param = params.getString(451 + index)
-            if (param.isNotEmpty()) {
-                equipmentOptions[index] = param
-            }
-        }
-        return equipmentOptions
+    val stats: EquipmentStats by lazy {
+        EquipmentStats(
+            attackStab = cachedParams.getInt(0),
+            attackSlash = cachedParams.getInt(1),
+            attackCrush = cachedParams.getInt(2),
+            attackMagic = cachedParams.getInt(3),
+            attackRanged = cachedParams.getInt(4),
+            defenceStab = cachedParams.getInt(5),
+            defenceSlash = cachedParams.getInt(6),
+            defenceCrush = cachedParams.getInt(7),
+            defenceMagic = cachedParams.getInt(8),
+            defenceRanged = cachedParams.getInt(9),
+            meleeStrength = cachedParams.getInt(10),
+            prayer = cachedParams.getInt(11),
+            rangedStrength = cachedParams.getInt(12),
+            magicStrength = cachedParams.getInt(299),
+            rangedEquipmentStrengthBonus = cachedParams.getInt(189),
+            magicDamage = cachedParams.getInt(65),
+            demonDamage = cachedParams.getInt(128),
+            degradeable = cachedParams.getInt(346),
+            silverStrength = cachedParams.getInt(518),
+            corpBoost = cachedParams.getInt(701),
+            golemDamage = cachedParams.getInt(1178),
+            kalphiteDamage = cachedParams.getInt(1353)
+        )
     }
 
-
+    val equipmentOptions: List<String?> by lazy {
+        (0 until 7).map { cachedParams.getString(451 + it).takeIf { it.isNotEmpty() } }
+    }
 }
 
 data class Weapon(
@@ -86,11 +102,22 @@ data class ItemServerType(
     var appearanceOverride2: Int = -1,
     var equipment: Equipment? = null,
     var weapon: Weapon? = null,
-    var params: MutableMap<Int, Any>? = null
+    var params: MutableMap<String, Any>? = null
 ) : Definition {
+
     companion object {
+        private val skillParamPairs = listOf(
+            434 to 436,
+            435 to 437,
+            191 to 613,
+            579 to 614,
+            610 to 615,
+            611 to 616,
+            612 to 617,
+        )
+
         fun load(id: Int, infoBoxItem: InfoBoxItem?, cache: ItemType): ItemServerType {
-            return ItemServerType().apply {
+            val instance = ItemServerType().apply {
                 this.id = id
                 name = cache.name
                 cost = infoBoxItem?.cost?.takeIf { it != -1 } ?: cache.cost
@@ -112,96 +139,82 @@ data class ItemServerType(
                 appearanceOverride1 = cache.appearanceOverride1
                 appearanceOverride2 = cache.appearanceOverride2
                 params = cache.params
+            }
 
-                if (cache.equipSlot != -1) {
-                    val params = cache.params
-                    equipment = Equipment(
-                        params = params,
-                        requirements = getItemRequirements(params).takeIf { it.isNotEmpty() } ?: infoBoxItem?.itemReq?: emptyMap(),
-                        slot = cache.equipSlot
+            val equipSlot = cache.equipSlot
+            val params = cache.params
+
+            if (equipSlot != -1) {
+                val requirements = getItemRequirements(params).takeIf { it.isNotEmpty() }
+                    ?: infoBoxItem?.itemReq ?: emptyMap()
+
+                instance.equipment = Equipment(
+                    slot = equipSlot,
+                    requirements = requirements,
+                    paramsProvider = { params }
+                )
+
+                if (equipSlot == 3 || equipSlot == 5) {
+                    val combatStyle = infoBoxItem?.combatStyle.orEmpty()
+                    val weaponType = WeaponTypes.values().find { it.name == combatStyle.uppercase().replace(" ", "_") }
+                        ?: WeaponTypes.UNARMED
+
+                    val weaponTypeRenderData = instance.findWeaponTypeRenderData(id, weaponType)
+
+                    val specEnum = ServerCacheManager.getEnum(906)
+                    val specAmount = specEnum?.values?.takeIf { it.containsKey(id.toString()) }?.getInt(id) ?: -1
+
+                    val attackSpeed = params?.getInt(14)?: 4
+                    val attackRange = params?.getInt(13) ?: infoBoxItem?.attackRange ?: 0
+
+                    instance.weapon = Weapon(
+                        attackSpeed = attackSpeed,
+                        weaponType = weaponType,
+                        weaponTypeRenderData = weaponTypeRenderData,
+                        attackRange = attackRange,
+                        specAmount = specAmount
                     )
-
-                    if (cache.equipSlot == 3 || cache.equipSlot == 5) {
-                        val weaponType = if (infoBoxItem?.combatStyle == null) WeaponTypes.UNARMED else WeaponTypes.valueOf(infoBoxItem.combatStyle.uppercase().replace(" ", "_"))
-                        val weaponTypeRenderData = findWeaponTypeRenderData(id, weaponType)
-
-                        weapon = Weapon(
-                            attackSpeed = params.getInt(14),
-                            weaponType = weaponType,
-                            weaponTypeRenderData = weaponTypeRenderData,
-                            attackRange = params?.takeIf { it.containsKey(13) }?.getInt(13) ?: infoBoxItem?.attackRange ?: 0,
-                            specAmount = ServerCacheManager.getEnum(906)?.values?.takeIf { it.containsKey(id) }.getInt(id)
-                        )
-                    }
                 }
             }
+
+            return instance
+        }
+
+        private fun getItemRequirements(params: Map<String, Any>?): Map<String, Int> {
+            if (params == null) return emptyMap()
+
+            val enum81 = ServerCacheManager.getEnum(81) ?: return emptyMap()
+            val enum108 = ServerCacheManager.getEnum(108) ?: return emptyMap()
+
+            return skillParamPairs.mapNotNull { (skillKey, levelKey) ->
+                val skillId = params[skillKey.toString()] ?: return@mapNotNull null
+                val skillNameId = enum81.values[skillId] ?: return@mapNotNull null
+                val skillName = enum108.values[skillNameId]?.toString()?.lowercase() ?: return@mapNotNull null
+                skillName to params.getInt(levelKey)
+            }.toMap()
         }
     }
 
-    fun findWeaponTypeRenderData(id : Int, weaponType : WeaponTypes) : WeaponTypeRenderData? {
-        val renderData = ItemRenderDataManager.getItemRenderAnimationByItem(id)
-        if (renderData != null) return renderData.toServer()
-        return ItemRenderDataManager.getItemRenderAnimationById(weaponType.fallbackRenderID)?.toServer()
-    }
-
-    private val skillParamPairs = listOf(
-        Pair(434,436),
-        Pair(435,437),
-        Pair(191,613),
-        Pair(579,614),
-        Pair(610,615),
-        Pair(611,616),
-        Pair(612,617),
-    )
-
-    fun getItemRequirements(params: Map<Int, Any>?) : Map<String,Int> {
-        if (params == null) return emptyMap()
-        val req : MutableMap<String,Int> = emptyMap<String, Int>().toMutableMap()
-
-        skillParamPairs.forEach {
-            if (params.containsKey(it.first)) {
-                val statID = ServerCacheManager.getEnum(81)!!.values[params[it.first]]
-                val skill = ServerCacheManager.getEnum(108)!!.values[statID]
-                req[skill.toString().lowercase()] = params.getInt(it.second)
-            }
-        }
-
-        return req
-    }
-
+    fun findWeaponTypeRenderData(id: Int, weaponType: WeaponTypes): WeaponTypeRenderData? =
+        ItemRenderDataManager.getItemRenderAnimationByItem(id)?.toServer()
+            ?: ItemRenderDataManager.getItemRenderAnimationById(weaponType.fallbackRenderID)?.toServer()
 
     fun isEquippable() = equipment != null
-
     fun isWeapon() = weapon != null
 
-    val stackable: Boolean
-        get() = stacks == 1 || noteTemplateId > 0
-
-    val noted: Boolean
-        get() = noteTemplateId > 0
-
-    val isPlaceholder: Boolean
-        get() = placeholderTemplate > 0 && placeholderLink > 0
+    val stackable: Boolean get() = stacks == 1 || noteTemplateId > 0
+    val noted: Boolean get() = noteTemplateId > 0
+    val isPlaceholder: Boolean get() = placeholderTemplate > 0 && placeholderLink > 0
 
     fun shouldHideHair() = equipment?.slot == 9 || appearanceOverride1 == 9 || appearanceOverride2 == 9
-
 }
 
-private fun Map<Int, Any>?.getString(key: Int): String {
-    return when (val value = this?.get(key)) {
-        is Int -> value.toString()
-        is Number -> value.toString()
-        is String -> value.toString() ?: ""
-        else -> ""
-    }
-}
+private fun Map<String, Any>.getString(key: Int): String =
+    this[key.toString()]?.toString() ?: ""
 
-fun Map<Int, Any>?.getInt(key: Int): Int {
-    return when (val value = this?.get(key)) {
-        is Int -> value
-        is Number -> value.toInt()
-        is String -> value.toIntOrNull() ?: 0
-        else -> 0
-    }
+private fun Map<String, Any>.getInt(key: Int): Int = when (val v = this[key.toString()]) {
+    is Int -> v
+    is Number -> v.toInt()
+    is String -> v.toIntOrNull() ?: 0
+    else -> 0
 }
-

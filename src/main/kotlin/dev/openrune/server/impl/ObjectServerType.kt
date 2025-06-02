@@ -23,14 +23,12 @@ data class ObjectServerType(
     var obstructive: Boolean = false,
     var category: Int = -1,
     var supportsItems: Int = -1,
-    var configs: IntArray? = null,
     var isRotated: Boolean = false,
-    var varpId: Int = -1,
     var impenetrable: Boolean = true,
     var varbit: Int = -1,
     var varp: Int = -1,
     var transforms: MutableList<Int>? = null,
-    var params: MutableMap<Int, Any>? = null
+    var params: MutableMap<String, Any>? = null
 ) : Definition {
     companion object {
         fun load(id: Int, infoBoxObject: InfoBoxObject?, cache: ObjectType): ObjectServerType {
@@ -52,11 +50,9 @@ data class ObjectServerType(
                 obstructive = cache.obstructive
                 category = cache.category
                 supportsItems = cache.supportsItems
-                configs = cache.configs
                 isRotated = cache.isRotated
-                varpId = cache.varpId
                 impenetrable = cache.impenetrable
-                varbit = cache.varpId
+                varbit = cache.varbitId
                 varp = cache.varp
                 transforms = cache.transforms
                 params = cache.params

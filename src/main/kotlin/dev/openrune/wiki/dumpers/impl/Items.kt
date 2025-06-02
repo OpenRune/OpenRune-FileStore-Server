@@ -174,7 +174,7 @@ class Items : Dumper {
                 val destroy = extractValueField("destroy", template, keyIndex).orEmpty()
 
                 val attackRangeTemp =
-                    CacheManager.getItem(id)?.params?.takeIf { it.containsKey(13) }?.let { 0 } ?: attackRange
+                    CacheManager.getItem(id)?.params?.takeIf { it.containsKey(13.toString()) }?.let { 0 } ?: attackRange
 
                 var alchable = true
                 if ("alchable" in template) {
