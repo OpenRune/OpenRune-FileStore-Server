@@ -2,6 +2,12 @@ plugins {
     kotlin("jvm") version "1.9.0"
 }
 
+repositories {
+    mavenCentral()
+    maven("https://raw.githubusercontent.com/OpenRune/hosting/master")
+    maven("https://jitpack.io")
+}
+
 
 subprojects {
     apply(plugin = "kotlin")
@@ -12,6 +18,7 @@ subprojects {
     repositories {
         mavenCentral()
         maven("https://raw.githubusercontent.com/OpenRune/hosting/master")
+        maven("https://jitpack.io")
     }
 
     dependencies {
