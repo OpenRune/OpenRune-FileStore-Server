@@ -4,7 +4,7 @@ import dev.openrune.cache.CacheStore
 import io.github.oshai.kotlinlogging.KotlinLogging
 import java.nio.file.Path
 
-const val LAST_UPDATED_REV = 229
+const val LAST_UPDATED_REV = 230
 
 class ServerCacheConfigBuilder {
 

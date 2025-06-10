@@ -47,3 +47,4 @@ kk.json
 *.json
 /dumps/230/cache
 /.idea
+filestore-server/src/main/kotlin/dev/openrune/server/Test.kt

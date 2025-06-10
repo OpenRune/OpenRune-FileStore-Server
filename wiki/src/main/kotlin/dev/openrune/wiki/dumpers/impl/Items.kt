@@ -2,6 +2,7 @@ package dev.openrune.wiki.dumpers.impl
 
 import com.google.gson.*
 import dev.openrune.cache.CacheManager
+import dev.openrune.server.infobox.InfoBoxItem
 import dev.openrune.wiki.EncodingSettings
 import dev.openrune.wiki.Wiki
 import dev.openrune.wiki.dumpers.Dumper

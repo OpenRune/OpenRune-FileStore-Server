@@ -2,8 +2,7 @@ package dev.openrune.server.impl
 
 import dev.openrune.definition.Definition
 import dev.openrune.definition.type.NpcType
-import dev.openrune.wiki.dumpers.impl.InfoBoxItem
-import dev.openrune.wiki.dumpers.impl.InfoBoxObject
+import dev.openrune.server.infobox.InfoBoxItem
 
 data class NpcServerType(
     override var id: Int = -1,

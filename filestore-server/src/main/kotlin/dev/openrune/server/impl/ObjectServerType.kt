@@ -1,10 +1,8 @@
 package dev.openrune.server.impl
 
-import dev.openrune.cache.CacheManager.getObjects
 import dev.openrune.definition.Definition
 import dev.openrune.definition.type.ObjectType
-import dev.openrune.wiki.dumpers.impl.InfoBoxObject
-import kotlin.math.abs
+import dev.openrune.server.infobox.InfoBoxObject
 
 data class ObjectServerType(
     override var id: Int = -1,
@@ -49,7 +47,7 @@ data class ObjectServerType(
     }
 
     companion object {
-        fun load(id: Int, infoBoxObject: InfoBoxObject?,values: Map<Int, ObjectType?>): ObjectServerType {
+        fun load(id: Int, infoBoxObject: InfoBoxObject?, values: Map<Int, ObjectType?>): ObjectServerType {
 
             val cache = values[id]?: error("Object $id not found in cache")
 

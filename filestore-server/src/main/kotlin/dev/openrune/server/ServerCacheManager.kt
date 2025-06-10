@@ -1,8 +1,6 @@
  package dev.openrune.server
 
 import dev.openrune.OsrsCacheProvider
-import dev.openrune.cache.CacheManager
-import dev.openrune.cache.CacheStore
 import dev.openrune.cache.getOrDefault
 import dev.openrune.definition.type.DBRowType
 import dev.openrune.definition.type.DBTableType
@@ -17,13 +15,13 @@ import dev.openrune.definition.type.StructType
 import dev.openrune.definition.type.VarBitType
 import dev.openrune.definition.type.VarpType
 import dev.openrune.server.impl.item.ItemServerType
-import dev.openrune.wiki.dumpers.impl.InfoBoxItem
+import dev.openrune.server.infobox.InfoBoxItem
 import dev.openrune.filesystem.Cache
 import dev.openrune.server.ServerCacheManager.buildServerCacheConfig
 import dev.openrune.server.impl.NpcServerType
 import dev.openrune.server.impl.ObjectServerType
 import dev.openrune.server.impl.item.ItemRenderDataManager
-import dev.openrune.wiki.dumpers.impl.InfoBoxObject
+import dev.openrune.server.infobox.InfoBoxObject
 import java.nio.file.Path
 
 object ServerCacheManager {
@@ -126,16 +124,4 @@ object ServerCacheManager {
     fun getStructs() = structs.toMap()
 
 
-}
-
-fun main(args: Array<String>) {
-
-    val cache = Cache.load(Path.of("E:\\RSPS\\Illerai\\Cadarn-Server\\data\\cache"), false)
-    val config = buildServerCacheConfig {
-        dataStore =  OsrsCacheProvider(cache, 230)
-    }
-
-    ServerCacheManager.init(config)
-
-    println(ServerCacheManager.getNpc(7242))
 }

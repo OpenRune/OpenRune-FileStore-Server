@@ -3,7 +3,7 @@ package dev.openrune.server.impl.item
 import dev.openrune.definition.Definition
 import dev.openrune.definition.type.ItemType
 import dev.openrune.server.ServerCacheManager
-import dev.openrune.wiki.dumpers.impl.InfoBoxItem
+import dev.openrune.server.infobox.InfoBoxItem
 
 data class EquipmentStats(
     val attackStab: Int = 0,

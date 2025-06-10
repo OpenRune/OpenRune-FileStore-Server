@@ -1,5 +1,6 @@
 package dev.openrune.wiki.dumpers.impl
 
+import dev.openrune.server.infobox.InfoBoxObject
 import dev.openrune.wiki.EncodingSettings
 import dev.openrune.wiki.Wiki
 import dev.openrune.wiki.dumpers.Dumper
