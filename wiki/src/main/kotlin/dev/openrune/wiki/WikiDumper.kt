@@ -9,16 +9,8 @@ import dev.openrune.cache.tools.*
 import dev.openrune.cache.tools.OpenRS2.allCaches
 import dev.openrune.cache.util.stringToTimestamp
 import dev.openrune.cache.util.toEchochUTC
-import dev.openrune.wiki.EncodingSettings
-import dev.openrune.wiki.FileType
-import dev.openrune.wiki.RunescapeWikiExporter
-import dev.openrune.wiki.Wiki
 import dev.openrune.filesystem.Cache
-import dev.openrune.wiki.dumpers.impl.InfoBoxItem
-import dev.openrune.wiki.dumpers.impl.InfoBoxItemSerializer
-import dev.openrune.wiki.dumpers.impl.Items
-import dev.openrune.wiki.dumpers.impl.Objects
-import dev.openrune.wiki.dumpers.impl.WorldItemSpawns
+import dev.openrune.wiki.dumpers.impl.*
 import io.github.oshai.kotlinlogging.KotlinLogging
 import me.tongfei.progressbar.ProgressBar
 import me.tongfei.progressbar.ProgressBarBuilder
@@ -109,22 +101,29 @@ object WikiDumper {
         CacheManager.init(OsrsCacheProvider(Cache.load(cache.toPath(), false), 230))
         logger.info { "Loading Wiki This may take a while..." }
         val wiki = Wiki.load(wikiLocation.path)
-        val items = Items()
-        logger.info { "Parsing Items..." }
-        items.parseItem(wiki)
 
-        val objects = Objects()
-        logger.info { "Parsing Objects..." }
-        objects.parseItem(wiki)
+//        val items = Items()
+//        logger.info { "Parsing Items..." }
+//        items.parseItem(wiki)
+//
+//        val objects = Objects()
+//        logger.info { "Parsing Objects..." }
+//        objects.parseItem(wiki)
+//
+//
+//        val worldItemSpawns = WorldItemSpawns()
+//        logger.info { "Parsing World Item Spawns..." }
+//        worldItemSpawns.parseItem(wiki)
+
+         val npcs = Npcs()
+         logger.info { "Parsing Npcs..." }
+         npcs.parseItem(wiki)
 
 
-        val worldItemSpawns = WorldItemSpawns()
-        logger.info { "Parsing World Item Spawns..." }
-        worldItemSpawns.parseItem(wiki)
 
-        writeData(encodingSettings,items.toWrite(encodingSettings), File(getBaseLocation,"items"))
-        writeData(encodingSettings,objects.toWrite(encodingSettings), File(getBaseLocation,"objects"))
-        writeData(encodingSettings,worldItemSpawns.toWrite(encodingSettings), File(getBaseLocation,"worldItemSpawns"))
+//        writeData(encodingSettings,items.toWrite(encodingSettings), File(getBaseLocation,"items"))
+//        writeData(encodingSettings,objects.toWrite(encodingSettings), File(getBaseLocation,"objects"))
+//        writeData(encodingSettings,worldItemSpawns.toWrite(encodingSettings), File(getBaseLocation,"worldItemSpawns"))
     }
 
     fun unzip(zipFile: File, destDir: File): Boolean {

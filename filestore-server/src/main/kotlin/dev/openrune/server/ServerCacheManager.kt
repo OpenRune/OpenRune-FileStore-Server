@@ -1,6 +1,7 @@
  package dev.openrune.server
 
 import dev.openrune.OsrsCacheProvider
+import dev.openrune.cache.CacheManager
 import dev.openrune.cache.CacheStore
 import dev.openrune.cache.getOrDefault
 import dev.openrune.definition.type.DBRowType
@@ -135,4 +136,6 @@ fun main(args: Array<String>) {
     }
 
     ServerCacheManager.init(config)
+
+    println(ServerCacheManager.getNpc(7242))
 }
