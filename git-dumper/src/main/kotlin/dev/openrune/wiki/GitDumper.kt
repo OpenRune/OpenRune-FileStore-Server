@@ -46,7 +46,7 @@ private const val OWNER = "OpenRune"
 private const val REPO_NAME = "OpenRune-FileStore-Server"
 private const val BRANCH = "dump"
 
-private const val DUMP_WIKI_PAGES = false
+private const val DUMP_WIKI_PAGES = true
 
 @OptIn(ExperimentalPathApi::class)
 fun main(args: Array<String>) {
@@ -67,7 +67,7 @@ fun main(args: Array<String>) {
     OpenRS2.loadCaches()
 
     val localRev = BuildConfig.LAST_UPDATED_REVISION
-    val storedTimestamp = 0L
+    val storedTimestamp = BuildConfig.LAST_UPDATED_TIME
 
     val latest = OpenRS2.getLatest(OpenRS2.allCaches, GameType.OLDSCHOOL)
     val currentRevision = latest.builds.first().major
