@@ -49,7 +49,7 @@ fun main(args: Array<String>) {
 
     token = args[0]
 
-    val saveLocationArg = if (args.size > 1) args[1] else "./"
+    val saveLocationArg = if (args.size > 1) args[1] else "./gitDump"
     SAVE_LOCATION = Path.of(saveLocationArg).toAbsolutePath()
     WIKI_LOCATION = SAVE_LOCATION.resolve("wiki")
     CACHE_LOCATION = SAVE_LOCATION.resolve("cache")
