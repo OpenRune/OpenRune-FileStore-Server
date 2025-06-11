@@ -2,7 +2,6 @@ package dev.openrune.wiki
 
 import dev.openrune.OsrsCacheProvider
 import dev.openrune.cache.CacheManager
-import dev.openrune.cache.tools.DownloadListener
 import dev.openrune.cache.tools.GameType
 import dev.openrune.cache.tools.OpenRS2
 import dev.openrune.cache.util.stringToTimestamp
@@ -17,20 +16,11 @@ import dev.openrune.wiki.dumpers.Npcs.NPC_LOCATION
 import dev.openrune.wiki.dumpers.Objects
 import dev.openrune.wiki.dumpers.Objects.OBJECTS_LOCATION
 import io.github.oshai.kotlinlogging.KotlinLogging
-import me.tongfei.progressbar.ProgressBar
 import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.lib.TextProgressMonitor
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider
 import java.io.File
-import java.io.FileInputStream
-import java.io.FileOutputStream
-import java.io.IOException
-import java.nio.file.Files
 import java.nio.file.Path
-import java.nio.file.StandardCopyOption
-import java.util.*
-import java.util.zip.ZipEntry
-import java.util.zip.ZipInputStream
 import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.deleteRecursively
 import kotlin.system.exitProcess
@@ -59,7 +49,7 @@ fun main(args: Array<String>) {
 
     token = args[0]
 
-    val saveLocationArg = if (args.size > 1) args[1] else Path.of(System.getProperty("user.home"), "Desktop", "dump").toString()
+    val saveLocationArg = if (args.size > 1) args[1] else "./"
     SAVE_LOCATION = Path.of(saveLocationArg).toAbsolutePath()
     WIKI_LOCATION = SAVE_LOCATION.resolve("wiki")
     CACHE_LOCATION = SAVE_LOCATION.resolve("cache")
@@ -122,12 +112,15 @@ fun main(args: Array<String>) {
         ServerCacheManager.init(buildServerCacheConfig {
             dataStore =  cacheProvider
             itemsPath = ITEM_LOCATION.resolve("items-wiki-only.json")
-            objectsPath = OBJECTS_LOCATION.resolve("examines.csv")
+            objectsPath = OBJECTS_LOCATION.resolve("object-examines.csv")
+            npcsPath = NPC_LOCATION.resolve("npcs-wiki-only.json")
         })
 
         Items.writeServerData()
         Objects.writeServerData()
         Npcs.writeServerData()
+
+        logger.info { "Pushing..." }
 
         pushDumpFiles(tmpDir,currentRevision,git, latest.timestamp)
 

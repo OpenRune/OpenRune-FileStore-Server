@@ -1,3 +1,7 @@
+plugins {
+    application
+}
+
 dependencies {
     api(project(":wiki"))
 
@@ -35,4 +39,8 @@ val generateBuildConfig by tasks.registering {
 
 tasks.named("compileKotlin") {
     dependsOn(generateBuildConfig)
+}
+
+application {
+    mainClass.set("dev.openrune.wiki.GitDumperKt")
 }
