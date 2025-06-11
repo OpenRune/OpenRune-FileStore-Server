@@ -39,6 +39,7 @@ private const val BRANCH = "dump"
 
 private const val DUMP_WIKI_PAGES = true
 
+
 @OptIn(ExperimentalPathApi::class)
 fun main(args: Array<String>) {
     if (args.isEmpty()) {
@@ -89,10 +90,6 @@ fun main(args: Array<String>) {
             pushWikiFiles(tmpDir,currentRevision,git, latest.timestamp)
         }
 
-
-        val cacheProvider = OsrsCacheProvider(Cache.load(CACHE_LOCATION, false), currentRevision)
-        CacheManager.init(cacheProvider)
-
         WikiDumper.getBaseLocation = SAVE_LOCATION.toFile()
         WikiDumper.rev = currentRevision
         WikiDumper.wikiLocation = WIKI_LOCATION.resolve("wiki.xml").toFile()
@@ -104,6 +101,11 @@ fun main(args: Array<String>) {
                 linkedIds = false
             )
         )
+
+
+        val cacheProvider = OsrsCacheProvider(Cache.load(CACHE_LOCATION, false), currentRevision)
+        CacheManager.init(cacheProvider)
+
 
         Items.init()
         Objects.init()
