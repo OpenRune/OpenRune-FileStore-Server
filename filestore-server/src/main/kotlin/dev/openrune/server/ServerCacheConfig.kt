@@ -6,5 +6,6 @@ import java.nio.file.Path
 data class ServerCacheConfig(
     val itemsPath: Path? = null,
     val objectsPath: Path? = null,
+    val npcsPath: Path? = null,
     val dataStore: CacheStore
 )

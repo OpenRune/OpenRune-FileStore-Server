@@ -17,7 +17,9 @@ object RunescapeWikiExporter {
     private val logger = KotlinLogging.logger {}
     private var userAgent = ""
 
-    fun export(exportLoc : File, userAgent : String = "OrWikiDumper") {
+    fun export(exportLoc : File, userAgent : String = "OrWikiDumper-${System.currentTimeMillis()}") {
+        exportLoc.mkdirs()
+
         this.userAgent = userAgent
         val wiki = "oldschool.runescape.wiki"
         val input = File(exportLoc,"wiki.xml.bz2")

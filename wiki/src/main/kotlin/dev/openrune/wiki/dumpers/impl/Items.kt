@@ -5,6 +5,7 @@ import dev.openrune.cache.CacheManager
 import dev.openrune.server.infobox.InfoBoxItem
 import dev.openrune.wiki.EncodingSettings
 import dev.openrune.wiki.Wiki
+import dev.openrune.wiki.WikiDumper
 import dev.openrune.wiki.dumpers.Dumper
 import dev.openrune.wiki.dumpers.extractIds
 import dev.openrune.wiki.dumpers.extractValueField
@@ -66,10 +67,10 @@ class Items : Dumper {
     override fun name() = "items"
     var items = mutableMapOf<Int, InfoBoxItem>()
 
-    override fun parseItem(wiki: Wiki) {
+    override fun parseItem() {
         val parsedItems = mutableMapOf<Int, InfoBoxItem>()
 
-        val pages = wiki.pages
+        val pages = WikiDumper.wiki.pages
             .asSequence()
             .filter { it.namespace.key == 0 }
             .filter {

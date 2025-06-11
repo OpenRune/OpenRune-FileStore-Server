@@ -3,6 +3,7 @@ package dev.openrune.wiki.dumpers.impl
 import dev.openrune.server.infobox.*
 import dev.openrune.wiki.EncodingSettings
 import dev.openrune.wiki.Wiki
+import dev.openrune.wiki.WikiDumper
 import dev.openrune.wiki.dumpers.Dumper
 import dev.openrune.wiki.dumpers.extractIds
 import dev.openrune.wiki.dumpers.extractValueField
@@ -16,10 +17,10 @@ class Npcs : Dumper {
 
     override fun name() = "npcs"
 
-    override fun parseItem(wiki: Wiki) {
+    override fun parseItem() {
         val parsedNpcs = mutableMapOf<Int, InfoBoxNpc>()
 
-        val pages = wiki.pages
+        val pages = WikiDumper.wiki.pages
             .asSequence()
             .filter { it.namespace.key == 0 }
             .filter { it.revision.text.contains("infobox monster", ignoreCase = true) }
@@ -98,7 +99,6 @@ class Npcs : Dumper {
                     }.orEmpty()
 
                 val infoBoxNpc = InfoBoxNpc(
-                    linkedIds = emptyList(),
                     examine = examine,
                     maxHit = maxHit.first,
                     maxHitExtra = maxHit.second,

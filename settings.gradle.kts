@@ -5,3 +5,4 @@ rootProject.name = "OpenRune-FileStore-Server"
 include("wiki")
 include("filestore-server")
 include("common")
+include("git-dumper")

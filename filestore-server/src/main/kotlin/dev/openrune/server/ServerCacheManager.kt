@@ -1,30 +1,15 @@
  package dev.openrune.server
 
-import dev.openrune.OsrsCacheProvider
 import dev.openrune.cache.getOrDefault
-import dev.openrune.definition.type.DBRowType
-import dev.openrune.definition.type.DBTableType
-import dev.openrune.definition.type.EnumType
-import dev.openrune.definition.type.HealthBarType
-import dev.openrune.definition.type.HitSplatType
-import dev.openrune.definition.type.ItemType
-import dev.openrune.definition.type.NpcType
-import dev.openrune.definition.type.ObjectType
-import dev.openrune.definition.type.SequenceType
-import dev.openrune.definition.type.StructType
-import dev.openrune.definition.type.VarBitType
-import dev.openrune.definition.type.VarpType
-import dev.openrune.server.impl.item.ItemServerType
-import dev.openrune.server.infobox.InfoBoxItem
-import dev.openrune.filesystem.Cache
-import dev.openrune.server.ServerCacheManager.buildServerCacheConfig
+import dev.openrune.definition.type.*
 import dev.openrune.server.impl.NpcServerType
 import dev.openrune.server.impl.ObjectServerType
 import dev.openrune.server.impl.item.ItemRenderDataManager
+import dev.openrune.server.impl.item.ItemServerType
+import dev.openrune.server.infobox.InfoBoxItem
 import dev.openrune.server.infobox.InfoBoxObject
-import java.nio.file.Path
 
-object ServerCacheManager {
+ object ServerCacheManager {
 
     fun buildServerCacheConfig(init: ServerCacheConfigBuilder.() -> Unit): ServerCacheConfig {
         return ServerCacheConfigBuilder().apply(init).build()

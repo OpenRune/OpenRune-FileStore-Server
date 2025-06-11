@@ -33,6 +33,8 @@ object WikiDumper {
 
     var wikiLocation = File(getBaseLocation,"wiki/wiki.xml")
 
+    val wiki : Wiki get() = Wiki.load(wikiLocation.path)
+
     @JvmStatic
     fun main(args: Array<String>) {
         if (rev == -1) {
@@ -45,13 +47,11 @@ object WikiDumper {
 
         }
 
-        init(
-            encodingSettings = EncodingSettings(encodeType = FileType.JSON, prettyPrint = true, linkedIds = false)
-        )
+        setup(encodingSettings = EncodingSettings(encodeType = FileType.JSON, prettyPrint = true, linkedIds = false))
     }
 
 
-    fun init(
+    fun setup(
         cache : File = File(getBaseLocation,"cache"),
         encodingSettings: EncodingSettings = EncodingSettings()
     ) {
@@ -94,37 +94,6 @@ object WikiDumper {
                 }
             })
         }
-
-        startWikiDumping(cache,encodingSettings)
-    }
-
-    fun startWikiDumping(cache: File,encodingSettings : EncodingSettings) {
-        CacheManager.init(OsrsCacheProvider(Cache.load(cache.toPath(), false), 230))
-        logger.info { "Loading Wiki This may take a while..." }
-        val wiki = Wiki.load(wikiLocation.path)
-
-//        val items = Items()
-//        logger.info { "Parsing Items..." }
-//        items.parseItem(wiki)
-//
-//        val objects = Objects()
-//        logger.info { "Parsing Objects..." }
-//        objects.parseItem(wiki)
-//
-//
-//        val worldItemSpawns = WorldItemSpawns()
-//        logger.info { "Parsing World Item Spawns..." }
-//        worldItemSpawns.parseItem(wiki)
-
-         val npcs = Npcs()
-         logger.info { "Parsing Npcs..." }
-         npcs.parseItem(wiki)
-
-
-
-//        writeData(encodingSettings,items.toWrite(encodingSettings), File(getBaseLocation,"items"))
-//        writeData(encodingSettings,objects.toWrite(encodingSettings), File(getBaseLocation,"objects"))
-//        writeData(encodingSettings,worldItemSpawns.toWrite(encodingSettings), File(getBaseLocation,"worldItemSpawns"))
     }
 
     fun unzip(zipFile: File, destDir: File): Boolean {

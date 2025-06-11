@@ -5,7 +5,7 @@ import dev.openrune.wiki.Wiki
 
 interface Dumper {
     fun name(): String
-    fun parseItem(wiki : Wiki)
+    fun parseItem()
     fun toWrite(encodingSettings : EncodingSettings) : Any
 }
 

@@ -1,12 +1,10 @@
 package dev.openrune.server.infobox
 
-import com.google.gson.*
-import com.google.gson.reflect.TypeToken
 import java.nio.file.Path
 import kotlin.collections.set
+import kotlin.io.path.readText
 
 data class InfoBoxObject(
-    var linkedIds: List<Int>? = null,
     val examine: String
 ) {
     override fun hashCode(): Int {
@@ -14,19 +12,18 @@ data class InfoBoxObject(
     }
 
     companion object {
-        fun load(items: Path): Map<Int, InfoBoxObject> {
-            val type = object : TypeToken<Map<Int, InfoBoxObject>>() {}.type
-            val original = Gson().fromJson<Map<Int, InfoBoxObject>>(items.toFile().readText(), type)
 
+        fun load(objectExamines: Path): Map<Int, InfoBoxObject> {
             val flatMap = mutableMapOf<Int, InfoBoxObject>()
 
-            for ((id, item) in original) {
-                flatMap[id] = item
-                if (!item.linkedIds.isNullOrEmpty()) {
-                    for (linkedId in item.linkedIds!!) {
-                        flatMap[linkedId] = item
-                    }
-                }
+            objectExamines.readText().lines().forEach { line ->
+                val parts = line.split(',')
+                if (parts.size < 2) return@forEach
+
+                val id = parts[0].toIntOrNull() ?: return@forEach
+                val description = parts[1]
+
+                flatMap[id] = InfoBoxObject(description)
             }
 
             return flatMap

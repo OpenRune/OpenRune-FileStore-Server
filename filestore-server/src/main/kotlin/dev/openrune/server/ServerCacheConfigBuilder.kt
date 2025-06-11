@@ -12,6 +12,7 @@ class ServerCacheConfigBuilder {
 
     var itemsPath: Path? = null
     var objectsPath: Path? = null
+    var npcsPath: Path? = null
 
     private var _dataStore: CacheStore? = null
     var dataStore: CacheStore
@@ -35,7 +36,8 @@ class ServerCacheConfigBuilder {
 
         return ServerCacheConfig(
             itemsPath = itemsPath ?: getDefaultResourcePath("items.json"),
-            objectsPath = objectsPath ?: getDefaultResourcePath("objects.json"),
+            objectsPath = objectsPath ?: getDefaultResourcePath("object-examines.csv"),
+            npcsPath = npcsPath ?: getDefaultResourcePath("npcs.json"),
             dataStore = store
         )
     }

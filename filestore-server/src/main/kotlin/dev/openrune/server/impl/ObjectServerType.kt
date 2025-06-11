@@ -7,6 +7,7 @@ import dev.openrune.server.infobox.InfoBoxObject
 data class ObjectServerType(
     override var id: Int = -1,
     var examine: String = "",
+    var name : String = "",
     var sizeX: Int = 1,
     var sizeY: Int = 1,
     var offsetX: Int = 0,
@@ -53,7 +54,8 @@ data class ObjectServerType(
 
             return ObjectServerType().apply {
                 this.id = id
-                examine =  infoBoxObject?.examine?.takeIf { it.isNotEmpty() } ?: "null"
+                name = cache.name
+                examine = infoBoxObject?.examine?.takeIf { it.isNotEmpty() } ?: "null"
                 sizeX = cache.sizeX
                 sizeY = cache.sizeY
                 offsetX = cache.offsetX

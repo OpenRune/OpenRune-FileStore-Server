@@ -2,6 +2,7 @@ package dev.openrune.wiki.dumpers.impl
 
 import dev.openrune.wiki.EncodingSettings
 import dev.openrune.wiki.Wiki
+import dev.openrune.wiki.WikiDumper
 import dev.openrune.wiki.dumpers.Dumper
 import dev.openrune.wiki.dumpers.extractIds
 import dev.openrune.wiki.dumpers.extractValueField
@@ -28,10 +29,10 @@ class WorldItemSpawns : Dumper {
     override fun name() = "itemSpawns"
     var itemSpawns = mutableMapOf<Int, List<ItemSpawnEntry>>()
 
-    override fun parseItem(wiki: Wiki) {
+    override fun parseItem() {
         val parsedItems = mutableMapOf<Int, List<ItemSpawnEntry>>()
 
-        val pages = wiki.pages.asSequence()
+        val pages = WikiDumper.wiki.pages.asSequence()
             .filter { it.namespace.key == 0 }
             .filter { it.revision.text.contains("ItemSpawnLine", ignoreCase = true) }
 

@@ -24,6 +24,7 @@ subprojects {
     dependencies {
         implementation("dev.or2:all:2.0.17")
         implementation("com.google.code.gson:gson:2.12.1")
+        implementation("me.tongfei:progressbar:0.9.5")
         implementation("io.github.oshai:kotlin-logging-jvm:7.0.3")
     }
 
