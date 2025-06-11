@@ -33,6 +33,7 @@ import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
 import kotlin.io.path.ExperimentalPathApi
 import kotlin.io.path.deleteRecursively
+import kotlin.system.exitProcess
 
 private val logger = KotlinLogging.logger {}
 
@@ -134,6 +135,7 @@ fun main(args: Array<String>) {
 
     } else {
         logger.info { "No updates found." }
+        exitProcess(0)
     }
 }
 
