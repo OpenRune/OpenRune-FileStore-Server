@@ -1,0 +1,71 @@
+name: Build Fonts
+
+on:
+  push:
+    branches:
+      - dump
+    paths:
+      - 'fonts/**'
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch to run workflow on'
+        required: true
+        default: 'dump'
+
+jobs:
+  build-fonts:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v3
+      with:
+        ref: ${{ github.event.inputs.branch || github.ref_name }}
+        fetch-depth: 0
+
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.11
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y fontforge imagemagick
+        pip install fonttools
+
+    - name: Run font generation script
+      run: python build.py
+      working-directory: fonts
+
+    - name: Debug generated files
+      run: ls -la compiled-output
+      working-directory: fonts
+
+    - name: Commit and push generated fonts
+      working-directory: fonts
+      env:
+        GH_TOKEN: ${{ secrets.GH_TOKEN }}
+      run: |
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+
+        git add compiled-output
+
+        if ! git diff --cached --quiet; then
+          git commit -m "Updated runescape fonts"
+          git push https://x-access-token:${GH_TOKEN}@github.com/OpenRune/OpenRune-FileStore-Server.git dump
+        else
+          echo "No changes detected in compiled-output, skipping commit."
+        fi
+
+    - name: List output files
+      run: find compiled-output -type f
+      working-directory: fonts
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: fonts-output
+        path: fonts/compiled-output/
