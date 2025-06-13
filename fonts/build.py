@@ -240,7 +240,7 @@ def make_preview(ttf, png):
 
 for category in os.listdir('data'):
     category_dir = path.join('data', category)
-    out_dir = 'out'
+    out_dir = 'compiled-output'
     out_category_dir = path.join(out_dir, category)
     ttf_dir = path.join(out_category_dir, 'ttf')
     otf_dir = path.join(out_category_dir, 'otf')
