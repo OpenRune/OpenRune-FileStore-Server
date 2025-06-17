@@ -100,11 +100,10 @@ class Items : Dumper {
             val combatStylesTemplate = combatStylesTemplates.firstOrNull() ?: emptyMap()
 
             val idKeys = template.keys.filter { it == "id" || it.matches(Regex("id\\d+")) }
-            val idCount = idKeys.size
 
             val ids = mutableListOf<Pair<Int, Int>>()
-            for (keyIndex in 1..idCount) {
-                extractIds(template, keyIndex, ids)
+            idKeys.indices.forEach { i ->
+                extractIds(template, i, ids)
             }
 
             var attackRange = 0

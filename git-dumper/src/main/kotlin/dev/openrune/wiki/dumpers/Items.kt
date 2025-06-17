@@ -6,6 +6,8 @@ import dev.openrune.server.ServerCacheManager
 import dev.openrune.wiki.DATA_LOCATION
 import dev.openrune.wiki.EncodingSettings
 import dev.openrune.wiki.WikiDumper
+import dev.openrune.wiki.dumpers.extractIds
+import dev.openrune.wiki.dumpers.extractValueField
 import dev.openrune.wiki.dumpers.impl.Items as ItemParser
 import dev.openrune.wiki.dumpers.impl.WorldItemSpawns
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -104,7 +106,7 @@ object Items {
             val ids = mutableListOf<Pair<Int, Int>>()
 
             idKeys.indices.forEach { i ->
-                extractIds(template, i + 1, ids)
+                extractIds(template, i, ids)
             }
 
             ids.forEach { (id, index) ->

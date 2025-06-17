@@ -13,6 +13,7 @@ fun extractIds(template: Map<String, Any>, keyIndex: Int, ids: MutableList<Pair<
     try {
         val idField = extractValueField("id", template, keyIndex)?.trim()
 
+
         if (idField != null) {
             val idsFromField = if (idField.contains(",")) {
                 idField.split(",").map { it.trim().toInt() }
@@ -31,11 +32,11 @@ fun extractIds(template: Map<String, Any>, keyIndex: Int, ids: MutableList<Pair<
     }
 }
 
-fun extractValueField(key: String,template: Map<String, Any>, index: Int): String? {
+fun extractValueField(key: String, template: Map<String, Any>, index: Int): String? {
     return if (key in template) {
-        extractField(key, template).toString()
+        extractField(key, template)
     } else {
-        extractFieldMultiple(key, index + 1, template).toString()
+        extractFieldMultiple(key, index + 1, template)
     }
 }
 

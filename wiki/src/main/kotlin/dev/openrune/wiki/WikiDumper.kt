@@ -20,6 +20,7 @@ import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.IOException
 import java.net.URL
+import java.nio.file.Path
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
 
@@ -37,23 +38,43 @@ object WikiDumper {
 
     @JvmStatic
     fun main(args: Array<String>) {
-        if (rev == -1) {
-            logger.info { "Finding OSRS Latest Rev" }
-            loadCaches()
-            rev = getLatest(allCaches).builds.first().major
-            logger.info { "Found Rev: $rev" }
-            getBaseLocation = File("./dumps/$rev")
-            wikiLocation = File(getBaseLocation,"wiki/wiki.xml")
 
-        }
+        val cache = Path.of("C:\\Users\\Home\\Desktop\\dump\\cache").toFile()
+        getBaseLocation = Path.of("C:\\Users\\Home\\Desktop\\dump\\").toFile()
+        wikiLocation = File(getBaseLocation,"wiki/wiki.xml")
 
-        setup(encodingSettings = EncodingSettings(encodeType = FileType.JSON, prettyPrint = true, linkedIds = false))
+        rev = 230
+
+        val encodingSettings = EncodingSettings(
+            encodeType = FileType.JSON,
+            prettyPrint = true,
+            linkedIds = false
+        )
+
+        setup()
+
+        CacheManager.init(OsrsCacheProvider(Cache.load(cache.toPath(), false), 230))
+
+         val items = Items()
+         logger.info { "Parsing Items..." }
+         items.parseItem()
+
+        val worldItemSpawns = WorldItemSpawns()
+        logger.info { "Parsing World Item Spawns..." }
+        worldItemSpawns.parseItem()
+
+        val npcs = Npcs()
+        logger.info { "Parsing Npcs..." }
+        npcs.parseItem()
+
+        writeData(encodingSettings,items.toWrite(encodingSettings), File(getBaseLocation,"items"))
+        writeData(encodingSettings,npcs.toWrite(encodingSettings), File(getBaseLocation,"npcs"))
+        writeData(encodingSettings,worldItemSpawns.toWrite(encodingSettings), File(getBaseLocation,"worldItemSpawns"))
     }
 
 
     fun setup(
         cache : File = File(getBaseLocation,"cache"),
-        encodingSettings: EncodingSettings = EncodingSettings()
     ) {
 
         if (!getBaseLocation.exists()) {
@@ -66,7 +87,8 @@ object WikiDumper {
             RunescapeWikiExporter.export(wikiLocation.parentFile)
         }
 
-        if (!cache.exists()) {
+        if ((cache.listFiles()?.count { it.name == "main_file_cache.dat2" } ?: 0) == 0) {
+
             OpenRS2.downloadCacheByRevision(rev,cache, listener =  object : DownloadListener {
                 var progressBar: ProgressBar? = null
 
@@ -145,7 +167,7 @@ object WikiDumper {
 
 }
 
-fun writeData(encodingSettings: EncodingSettings, data : Any,path : File) {
+fun writeData(encodingSettings: EncodingSettings, data : Any, path : File) {
     when (encodingSettings.encodeType) {
         FileType.JSON -> {
             val gsonBuilder = GsonBuilder().apply {

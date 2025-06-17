@@ -20,7 +20,7 @@ object RunescapeWikiExporter {
     fun export(exportLoc : File, userAgent : String = "OrWikiDumper-${System.currentTimeMillis()}") {
         exportLoc.mkdirs()
 
-        this.userAgent = userAgent
+        RunescapeWikiExporter.userAgent = userAgent
         val wiki = "oldschool.runescape.wiki"
         val input = File(exportLoc,"wiki.xml.bz2")
         if (input.exists()) {
@@ -252,10 +252,12 @@ object RunescapeWikiExporter {
 
 
         val outputStream = FileOutputStream(outputFile)
-        val progressOutputStream = ProgressBar.wrap(
-            outputStream,
-            ProgressBarBuilder().setTaskName("Writing Wiki Xml output").setInitialMax(600 * 1024 * 1024)
-        )
+        val progressBar = ProgressBarBuilder()
+            .setTaskName("Writing Wiki Xml output")
+            .setInitialMax(600L * 1024 * 1024)
+            .build()
+
+        val progressOutputStream = ProgressOutputStream(outputStream, progressBar)
 
         val buffer = ByteArray(1024)
         var bytesRead: Int
@@ -265,6 +267,27 @@ object RunescapeWikiExporter {
 
         bzipStream.close()
         progressOutputStream.close()
+    }
+
+    class ProgressOutputStream(
+        out: OutputStream,
+        private val progressBar: ProgressBar
+    ) : FilterOutputStream(out) {
+
+        override fun write(b: Int) {
+            super.write(b)
+            progressBar.stepBy(1)
+        }
+
+        override fun write(b: ByteArray, off: Int, len: Int) {
+            super.write(b, off, len)
+            progressBar.stepBy(len.toLong())
+        }
+
+        override fun close() {
+            super.close()
+            progressBar.close()
+        }
     }
 
 

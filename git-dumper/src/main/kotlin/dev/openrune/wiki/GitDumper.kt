@@ -9,12 +9,15 @@ import dev.openrune.cache.util.toEchochUTC
 import dev.openrune.filesystem.Cache
 import dev.openrune.server.ServerCacheManager
 import dev.openrune.server.ServerCacheManager.buildServerCacheConfig
+import dev.openrune.wiki.RunescapeWikiExporter
+import dev.openrune.wiki.WikiDumper
 import dev.openrune.wiki.dumpers.Items
 import dev.openrune.wiki.dumpers.Items.ITEM_LOCATION
 import dev.openrune.wiki.dumpers.Npcs
 import dev.openrune.wiki.dumpers.Npcs.NPC_LOCATION
 import dev.openrune.wiki.dumpers.Objects
 import dev.openrune.wiki.dumpers.Objects.OBJECTS_LOCATION
+import dev.or2.wiki.BuildConfig
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.lib.TextProgressMonitor
@@ -94,13 +97,7 @@ fun main(args: Array<String>) {
         WikiDumper.rev = currentRevision
         WikiDumper.wikiLocation = WIKI_LOCATION.resolve("wiki.xml").toFile()
 
-        WikiDumper.setup(
-            encodingSettings = EncodingSettings(
-                encodeType = FileType.JSON,
-                prettyPrint = true,
-                linkedIds = false
-            )
-        )
+        WikiDumper.setup()
 
 
         val cacheProvider = OsrsCacheProvider(Cache.load(CACHE_LOCATION, false), currentRevision)
@@ -113,9 +110,9 @@ fun main(args: Array<String>) {
 
         ServerCacheManager.init(buildServerCacheConfig {
             dataStore =  cacheProvider
-            itemsPath = ITEM_LOCATION.resolve("items-wiki-only.json")
-            objectsPath = OBJECTS_LOCATION.resolve("object-examines.csv")
-            npcsPath = NPC_LOCATION.resolve("npcs-wiki-only.json")
+            addItemPath(ITEM_LOCATION.resolve("items-wiki-only.json"))
+            addObjectPath(OBJECTS_LOCATION.resolve("object-examines.csv"))
+            addNpcPath(NPC_LOCATION.resolve("npcs-wiki-only.json"))
         })
 
         Items.writeServerData()

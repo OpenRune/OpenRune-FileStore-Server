@@ -1,12 +1,15 @@
  package dev.openrune.server
 
+import dev.openrune.cache.CacheStore
 import dev.openrune.cache.getOrDefault
 import dev.openrune.definition.type.*
+import dev.openrune.filesystem.Cache
 import dev.openrune.server.impl.NpcServerType
 import dev.openrune.server.impl.ObjectServerType
 import dev.openrune.server.impl.item.ItemRenderDataManager
 import dev.openrune.server.impl.item.ItemServerType
 import dev.openrune.server.infobox.InfoBoxItem
+import dev.openrune.server.infobox.InfoBoxNpc
 import dev.openrune.server.infobox.InfoBoxObject
 
  object ServerCacheManager {
@@ -29,13 +32,12 @@ import dev.openrune.server.infobox.InfoBoxObject
     private val dbtables = mutableMapOf<Int, DBTableType>()
 
     fun init(config: ServerCacheConfig) {
-        val itemsPath = config.itemsPath!!
-        val objectsPath = config.objectsPath!!
         val store = config.dataStore
 
         ItemRenderDataManager.init()
-        val itemsData = InfoBoxItem.load(itemsPath)
-        val objectData = InfoBoxObject.load(objectsPath)
+        val itemsData = config.itemPaths.flatMap { InfoBoxItem.load(it).entries }.associate { it.key to it.value }
+        val objectData = config.objectPaths.flatMap { InfoBoxObject.load(it).entries }.associate { it.key to it.value }
+        val npcData = config.npcPaths.flatMap { InfoBoxNpc.load(it).entries }.associate { it.key to it.value }
 
         store.init()
 
@@ -50,9 +52,9 @@ import dev.openrune.server.infobox.InfoBoxObject
         dbtables.putAll(store.dbtables)
 
 
-        this.items.putAll(store.items.mapValues { ItemServerType.load(it.key, itemsData[it.key], it.value) })
-        this.npcs.putAll(store.npcs.mapValues { NpcServerType.load(it.key, itemsData[it.key], it.value) })
-        this.objects.putAll(store.objects.mapValues { ObjectServerType.load(it.key, objectData[it.key],store.objects) })
+        items.putAll(store.items.mapValues { ItemServerType.load(it.key, itemsData[it.key], it.value) })
+        npcs.putAll(store.npcs.mapValues { NpcServerType.load(it.key, npcData[it.key], it.value) })
+        objects.putAll(store.objects.mapValues { ObjectServerType.load(it.key, objectData[it.key],store.objects) })
 
         ItemRenderDataManager.clear()
     }

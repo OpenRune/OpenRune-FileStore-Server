@@ -2,7 +2,6 @@ package dev.openrune.wiki.dumpers.impl
 
 import dev.openrune.server.infobox.*
 import dev.openrune.wiki.EncodingSettings
-import dev.openrune.wiki.Wiki
 import dev.openrune.wiki.WikiDumper
 import dev.openrune.wiki.dumpers.Dumper
 import dev.openrune.wiki.dumpers.extractIds
@@ -23,7 +22,10 @@ class Npcs : Dumper {
         val pages = WikiDumper.wiki.pages
             .asSequence()
             .filter { it.namespace.key == 0 }
-            .filter { it.revision.text.contains("infobox monster", ignoreCase = true) }
+            .filter {
+                val text = it.revision.text.lowercase()
+                text.contains("infobox monster") || text.contains("infobox npc")
+            }
 
         val progressBar = ProgressBarBuilder()
             .setInitialMax(pages.count().toLong())
@@ -31,81 +33,126 @@ class Npcs : Dumper {
             .build()
 
         pages.forEach { page ->
-            val templates = page.getTemplateMaps("infobox monster")
-            if (templates.isEmpty()) return@forEach
-            val template = templates.first()
 
-            val ids = mutableListOf<Pair<Int, Int>>()
-            val idKeys = template.keys.filter { it == "id" || it.matches(Regex("id\\d+")) }
-
-            for (index in 1..idKeys.size) {
-                extractIds(template, index, ids)
+            val templates = buildList {
+                addAll(page.getTemplateMaps("infobox monster"))
+                addAll(page.getTemplateMaps("infobox npc"))
             }
 
-            ids.forEach { (id, keyIndex) ->
-                val examine = extractValueField("examine", template, keyIndex).orEmpty()
-                val aggressive = extractValueField("aggressive", template, keyIndex)
-                    .orEmpty().contains("Yes", ignoreCase = true)
+            if (templates.isEmpty()) return@forEach
+            templates.forEach { template ->
+                val ids = mutableListOf<Pair<Int, Int>>()
+                val idKeys = template.keys.filter { it == "id" || it.matches(Regex("id\\d+")) }
 
-                val poisonousText = extractValueField("poisonous", template, keyIndex).orEmpty()
-                val poisonousLevel = when {
-                    "yes" !in poisonousText.lowercase() -> -1
-                    Regex("""\((\d+)\)""").find(poisonousText) != null ->
-                        Regex("""\((\d+)\)""").find(poisonousText)!!.groupValues[1].toInt()
-                    else -> 1
+                idKeys.indices.forEach { i ->
+                    extractIds(template, i, ids)
                 }
 
-                val attackSpeed = extractValueField("attack speed", template, keyIndex).orEmpty().toIntOrNull() ?: 4
-                val respawn = extractValueField("respawn", template, keyIndex).orEmpty().toIntOrNull() ?: 35
-                val slayxp = extractValueField("slayxp", template, keyIndex).orEmpty().toIntOrNull() ?: -1
+                ids.forEach { (id, keyIndex) ->
 
-                fun checkImmunity(field: String) =
-                    extractValueField(field, template, keyIndex)
-                        .orEmpty()
-                        .contains(Regex("yes|immune", RegexOption.IGNORE_CASE))
+                    val examine = extractValueField("examine", template, keyIndex).orEmpty()
 
-                val immunepoison = checkImmunity("immunepoison")
-                val immunevenom = checkImmunity("immunevenom")
-                val immunecannon = checkImmunity("immunecannon")
-                val immunethrall = checkImmunity("immunethrall")
+                    val aggressive = extractValueField("aggressive", template, keyIndex)
+                        .orEmpty().contains("Yes", ignoreCase = true)
 
-                val slayerMasters = extractValueField("assignedby", template, keyIndex)
-                    ?.split(",")
-                    ?.mapNotNull { SlayerMaster.entries.find { sm -> sm.name == it.trim().uppercase() } }
-                    .orEmpty()
-
-                val maxHit = parseMaxHitField(extractValueField("max hit", template, keyIndex))
-
-                val elementalTypeIntMutableMap = mutableMapOf<ElementalType, Int>()
-
-                val elementalWeaknessTypeRaw = extractValueField("elementalweaknesstype", template, keyIndex)?.uppercase()
-                val elementalWeaknessPercentRaw = extractValueField("elementalweaknesspercent", template, keyIndex)
-
-                if (!elementalWeaknessTypeRaw.isNullOrBlank() && !elementalWeaknessPercentRaw.isNullOrBlank()) {
-                    val elementalWeaknessType = runCatching { ElementalType.valueOf(elementalWeaknessTypeRaw) }.getOrNull()
-                    val elementalWeaknessPercent = elementalWeaknessPercentRaw.toIntOrNull()
-
-                    if (elementalWeaknessType != null && elementalWeaknessPercent != null) {
-                        elementalTypeIntMutableMap[elementalWeaknessType] = elementalWeaknessPercent
+                    val poisonousText = extractValueField("poisonous", template, keyIndex).orEmpty()
+                    val poisonousLevel = when {
+                        "yes" !in poisonousText.lowercase() -> -1
+                        Regex("""\((\d+)\)""").find(poisonousText) != null ->
+                            Regex("""\((\d+)\)""").find(poisonousText)!!.groupValues[1].toInt()
+                        else -> 1
                     }
+
+                    val attackSpeed = extractValueField("attack speed", template, keyIndex).orEmpty().toIntOrNull() ?: 4
+                    val respawn = extractValueField("respawn", template, keyIndex).orEmpty().toIntOrNull() ?: 35
+                    val slayxp = extractValueField("slayxp", template, keyIndex).orEmpty().toIntOrNull() ?: -1
+
+                    fun checkImmunity(field: String) =
+                        extractValueField(field, template, keyIndex)
+                            .orEmpty()
+                            .contains(Regex("yes|immune", RegexOption.IGNORE_CASE))
+
+                    val immunepoison = checkImmunity("immunepoison")
+                    val immunevenom = checkImmunity("immunevenom")
+                    val immunecannon = checkImmunity("immunecannon")
+                    val immunethrall = checkImmunity("immunethrall")
+
+                    val slayerMasters = extractValueField("assignedby", template, keyIndex)
+                        ?.split(",")
+                        ?.mapNotNull { SlayerMaster.entries.find { sm -> sm.name == it.trim().uppercase() } }
+                        .orEmpty()
+
+                    val maxHit = parseMaxHitField(extractValueField("max hit", template, keyIndex))
+
+                    val elementalTypeIntMutableMap = mutableMapOf<ElementalType, Int>()
+
+                    val elementalWeaknessTypeRaw = extractValueField("elementalweaknesstype", template, keyIndex)?.uppercase()
+                    val elementalWeaknessPercentRaw = extractValueField("elementalweaknesspercent", template, keyIndex)
+
+                    if (!elementalWeaknessTypeRaw.isNullOrBlank() && !elementalWeaknessPercentRaw.isNullOrBlank()) {
+                        val elementalWeaknessType = runCatching { ElementalType.valueOf(elementalWeaknessTypeRaw) }.getOrNull()
+                        val elementalWeaknessPercent = elementalWeaknessPercentRaw.toIntOrNull()
+
+                        if (elementalWeaknessType != null && elementalWeaknessPercent != null) {
+                            elementalTypeIntMutableMap[elementalWeaknessType] = elementalWeaknessPercent
+                        }
+                    }
+
+                    val attributes = extractValueField("attributes", template, keyIndex)
+                        ?.split(",")
+                        ?.mapNotNull {
+                            it.trim().takeIf { it.isNotEmpty() }
+                                ?.uppercase()
+                                ?.let { attr -> MonsterAttribute.entries.find { e -> e.name == attr } }
+                        }.orEmpty()
+
+                    val attack = extractValueField("attbns", template, keyIndex).orEmpty().toIntOrNull() ?: 0
+                    val strength = extractValueField("strbns", template, keyIndex).orEmpty().toIntOrNull() ?: 0
+                    val magic = extractValueField("amagic", template, keyIndex).orEmpty().toIntOrNull() ?: 0
+                    val magicstrength = extractValueField("mbns", template, keyIndex).orEmpty().toIntOrNull() ?: 0
+                    val rangeddefence = extractValueField("arange", template, keyIndex).orEmpty().toIntOrNull() ?: 0
+                    val rangestrength = extractValueField("rngbns", template, keyIndex).orEmpty().toIntOrNull() ?: 0
+                    val stabdefence = extractValueField("dstab", template, keyIndex).orEmpty().toIntOrNull() ?: 0
+                    val slashdefence = extractValueField("dslash", template, keyIndex).orEmpty().toIntOrNull() ?: 0
+                    val crushdefence = extractValueField("dcrush", template, keyIndex).orEmpty().toIntOrNull() ?: 0
+                    val magicdefence = extractValueField("dmagic", template, keyIndex).orEmpty().toIntOrNull() ?: 0
+                    val lightdefence = extractValueField("dlight", template, keyIndex).orEmpty().toIntOrNull() ?: 0
+                    val standardefence = extractValueField("dstandard", template, keyIndex).orEmpty().toIntOrNull() ?: 0
+                    val heavydefence = extractValueField("dheavy", template, keyIndex).orEmpty().toIntOrNull() ?: 0
+
+                    val infoBoxNpc = InfoBoxNpc(
+                        examine = examine,
+                        maxHit = maxHit.first,
+                        maxHitExtra = maxHit.second,
+                        attributes = attributes,
+                        immunepoison = immunepoison,
+                        immunevenom = immunevenom,
+                        immunecannon = immunecannon,
+                        immunethrall = immunethrall,
+                        aggressive = aggressive,
+                        attackSpeed  = attackSpeed,
+                        poisonousLevel = poisonousLevel,
+                        slayerXp = slayxp,
+                        respawn = respawn,
+                        slayerMasters = slayerMasters,
+                        elementalTypes = elementalTypeIntMutableMap,
+                        attack = attack,
+                        strength = strength,
+                        magic = magic,
+                        magicstrength = magicstrength,
+                        rangeddefence = rangeddefence,
+                        rangestrength = rangestrength,
+                        stabdefence = stabdefence,
+                        slashdefence = slashdefence,
+                        crushdefence = crushdefence,
+                        magicdefence = magicdefence,
+                        lightdefence = lightdefence,
+                        standardefence = standardefence,
+                        heavydefence = heavydefence,
+                    )
+
+                    parsedNpcs[id] = infoBoxNpc
                 }
-
-                val attributes = extractValueField("attributes", template, keyIndex)
-                    ?.split(",")
-                    ?.mapNotNull {
-                        it.trim().takeIf { it.isNotEmpty() }
-                            ?.uppercase()
-                            ?.let { attr -> MonsterAttribute.entries.find { e -> e.name == attr } }
-                    }.orEmpty()
-
-                val infoBoxNpc = InfoBoxNpc(
-                    examine = examine,
-                    maxHit = maxHit.first,
-                    maxHitExtra = maxHit.second,
-                    attributes = attributes,
-                )
-
-                parsedNpcs[id] = infoBoxNpc
             }
 
             progressBar.step()
@@ -113,7 +160,7 @@ class Npcs : Dumper {
 
         progressBar.close()
 
-        println(parsedNpcs.filterKeys { it == 7242 }.values.firstOrNull())
+        println(parsedNpcs.filterKeys { it == 5878 }.values.firstOrNull())
         this.npcMap.clear()
         this.npcMap.putAll(parsedNpcs)
     }

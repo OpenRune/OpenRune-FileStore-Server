@@ -36,7 +36,7 @@ object WeaponTypesTable  {
             }
         }
 
-        formatAsEnum(result,"./dev.openrune.wiki.dumpers.WeaponTypesTable.txt")
+        formatAsEnum(result, "./dev.openrune.wiki.dumpers.WeaponTypesTable.txt")
     }
 
     fun parseCombatStylesTable(html: String): Map<String, List<CombatStyleEntry>> {
