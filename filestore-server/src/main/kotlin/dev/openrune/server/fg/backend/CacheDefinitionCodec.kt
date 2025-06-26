@@ -1,23 +1,20 @@
 package dev.openrune.server.fg.backend
 
 import dev.openrune.definition.Definition
-import dev.openrune.server.fg.usersimpl.ObjectServerType
+import dev.openrune.definition.DefinitionCodec
 import io.netty.buffer.ByteBuf
 import io.netty.buffer.Unpooled
 
-interface CacheDefinitionCodec<T : Definition> {
-    val opcodes: OpcodeList<T>
+abstract class CacheDefinitionCodec<T : Definition> : DefinitionCodec<T> {
+    abstract val opcodes: OpcodeList<T>
 
-    fun readLoop(definition: T, buffer: ByteBuf) {
-        while (true) {
-            val opcode = buffer.readUnsignedByte().toInt()
-            if (opcode == 0) break
-            val defOpcode = opcodes.allOpcodes.first { it.opcode == opcode }
-            defOpcode.decode(buffer, definition)
-        }
+    override fun T.read(opcode: Int, buffer: ByteBuf) {
+        val defOpcode = opcodes.allOpcodes.firstOrNull { it.opcode == opcode }
+            ?: error("Unknown opcode $opcode for ${this::class.simpleName}")
+        defOpcode.decode(buffer, this)
     }
 
-    fun ByteBuf.encode(definition: T) {
+    override fun ByteBuf.encode(definition: T) {
         for (opcodeDef in opcodes.allOpcodes) {
             if (opcodeDef.shouldEncode(definition)) {
                 opcodeDef.encode(this, definition)
@@ -26,21 +23,4 @@ interface CacheDefinitionCodec<T : Definition> {
         writeByte(0)
     }
 
-    fun createDefinition(): T
-
-    fun loadData(id: Int, data: ByteArray?): T {
-        val definition = createDefinition()
-        definition.id = id
-        if (data != null && data.isNotEmpty()) {
-            println("Byters: ${data!!.size}")
-            val reader = Unpooled.wrappedBuffer(data)
-            try {
-                readLoop(definition, reader)
-            } catch (e: Exception) {
-                e.printStackTrace()
-                error("Unable to decode ${definition.javaClass.simpleName} [$id]: ${e.message}")
-            }
-        }
-        return definition
-    }
 }

@@ -4,7 +4,6 @@ import dev.openrune.Index.CONFIGS
 import dev.openrune.cache.filestore.definition.DefinitionDecoder
 import dev.openrune.cache.filestore.definition.DefinitionTransform
 import dev.openrune.definition.Definition
-import dev.openrune.definition.DefinitionCodec
 
 abstract class ConfigDefinitionDecoder<T : Definition>(
     codec: CacheDefinitionCodec<T>,
