@@ -1,12 +1,12 @@
-package dev.openrune.server.fg.backend
+package dev.openrune.cache.filestore.definition
 
 import dev.openrune.cache.SPRITES
-import dev.openrune.cache.filestore.definition.DefinitionTransform
 import dev.openrune.definition.Definition
 import dev.openrune.filesystem.Cache
+import dev.openrune.server.fg.backend.CacheDefinitionCodec
 import java.nio.BufferUnderflowException
 
-abstract class ServerDefinitionDecoder<T : Definition>(val index: Int, private val codec: CacheDefinitionCodec<T>, private var transform: DefinitionTransform<T>? = null) {
+abstract class DefinitionDecoder<T : Definition>(val index: Int, private val codec: CacheDefinitionCodec<T>, private var transform: DefinitionTransform<T>? = null) {
 
     open fun isRS2() : Boolean = false
 
@@ -36,6 +36,9 @@ abstract class ServerDefinitionDecoder<T : Definition>(val index: Int, private v
                 val file = getFile(id)
                 val data = cache.data(index, archive, file)
                 if (data != null) {
+                    println("Index: " + index)
+                    println("Archive: " + archive)
+                    println("File: " + file)
                     val definition = codec.loadData(id, data)
                     transform?.changeValues(id, definition)
                     definitions[id] = definition
@@ -52,5 +55,7 @@ abstract class ServerDefinitionDecoder<T : Definition>(val index: Int, private v
 
     open fun getArchive(id: Int) = id
 
-
+    companion object {
+        //internal val logger = InlineLogger()
+    }
 }
