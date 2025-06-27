@@ -6,6 +6,7 @@ class ObjectServerCodec(private val revision: Int) : CacheDefinitionCodec<Object
 
     override val opcodes = OpcodeList<ObjectServerType>().apply {
         add(DefinitionOpcode(3, OpcodeType.INT, ObjectServerType::width))
+        add(DefinitionOpcodeList(4, OpcodeType.STRING, ObjectServerType::actions))
     }
 
     override fun createDefinition(): ObjectServerType = ObjectServerType()

@@ -81,3 +81,61 @@ fun <T, R> DefinitionOpcode(
     }
     return DefinitionOpcode(opcode, type, property)
 }
+
+fun <T, R> DefinitionOpcodeList(
+    opcode: Int,
+    type: OpcodeType,
+    property: KMutableProperty1<T, List<R>?>
+): DefinitionOpcode<T> = DefinitionOpcodeList(
+    opcode,
+    type,
+    getter = { property.get(it) },
+    setter = { def, value -> property.set(def, value) }
+)
+
+fun <T, R> DefinitionOpcodeList(
+    opcode: Int,
+    type: OpcodeType,
+    getter: (T) -> List<R>?,
+    setter: (T, List<R>) -> Unit
+): DefinitionOpcode<T> = DefinitionOpcode(
+    opcode,
+    decode = { buf, def ->
+        val count = buf.readUnsignedByte().toInt()
+        val list = buildList(count) {
+            repeat(count) {
+                @Suppress("UNCHECKED_CAST")
+                add(type.read(buf) as R)
+            }
+        }
+        setter(def, list)
+    },
+    encode = { buf, def ->
+        val list = getter(def)
+        buf.writeByte(list?.size ?: 0)
+        list?.forEach { type.write(buf, it as Any) }
+    },
+    shouldEncode = { getter(it)?.isNotEmpty() == true }
+)
+
+fun <T, R> DefinitionOpcodeList(
+    opcode: Int,
+    type: OpcodeType,
+    property: KProperty1<T, List<R>?>,
+    customSetter: ((T, List<R>) -> Unit)? = null
+): DefinitionOpcode<T> {
+    if (property is KMutableProperty1<T, List<R>?>) {
+        return DefinitionOpcodeList(opcode, type, property)
+    }
+
+    requireNotNull(customSetter) {
+        "Cannot decode into read-only property '${property.name}'. Provide a 'var' or a custom setter."
+    }
+
+    return DefinitionOpcodeList(
+        opcode,
+        type,
+        getter = { property.get(it) },
+        setter = customSetter
+    )
+}
