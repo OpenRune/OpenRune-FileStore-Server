@@ -1,4 +1,4 @@
-package dev.openrune.server.infobox
+package dev.openrune.wiki.infobox
 
 import com.google.gson.*
 import com.google.gson.reflect.TypeToken

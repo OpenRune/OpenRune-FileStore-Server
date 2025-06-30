@@ -1,4 +1,4 @@
-package dev.openrune.server.fg.backend
+package dev.openrune.server.definition.codec
 
 import dev.openrune.Index.CONFIGS
 import dev.openrune.cache.filestore.definition.DefinitionDecoder

@@ -10,8 +10,8 @@ import dev.openrune.cache.tools.OpenRS2.allCaches
 import dev.openrune.cache.util.stringToTimestamp
 import dev.openrune.cache.util.toEchochUTC
 import dev.openrune.filesystem.Cache
-import dev.openrune.server.infobox.InfoBoxItem
 import dev.openrune.wiki.dumpers.impl.*
+import dev.openrune.wiki.infobox.InfoBoxItem
 import io.github.oshai.kotlinlogging.KotlinLogging
 import me.tongfei.progressbar.ProgressBar
 import me.tongfei.progressbar.ProgressBarBuilder

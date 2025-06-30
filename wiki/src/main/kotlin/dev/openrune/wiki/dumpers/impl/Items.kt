@@ -2,7 +2,6 @@ package dev.openrune.wiki.dumpers.impl
 
 import com.google.gson.*
 import dev.openrune.cache.CacheManager
-import dev.openrune.server.infobox.InfoBoxItem
 import dev.openrune.wiki.EncodingSettings
 import dev.openrune.wiki.Wiki
 import dev.openrune.wiki.WikiDumper
@@ -10,7 +9,7 @@ import dev.openrune.wiki.dumpers.Dumper
 import dev.openrune.wiki.dumpers.extractIds
 import dev.openrune.wiki.dumpers.extractValueField
 import dev.openrune.wiki.dumpers.GrandExchangePrices
-import dev.openrune.wiki.dumpers.ItemRequirementsManager
+import dev.openrune.wiki.infobox.InfoBoxItem
 import io.github.oshai.kotlinlogging.KotlinLogging
 import me.tongfei.progressbar.ProgressBarBuilder
 import java.lang.reflect.Type
@@ -86,8 +85,7 @@ class Items : Dumper {
         prices.fetchLatestPrices()
         pb.step()
         pb.extraMessage = "Fetching Item Req"
-        val skillReq = ItemRequirementsManager()
-        skillReq.load()
+
         pb.step()
         pb.extraMessage = "Processing Item Pages"
         pages.forEach { page ->
@@ -139,11 +137,10 @@ class Items : Dumper {
                 }
                 if (cost == 0) alchable = false
 
-                val skillReqMap = skillReq.getRequirementsForItem(id)
 
                 val newItem = InfoBoxItem(
                     emptyList(), examine, cost, prices.getPriceData(id), destroy, alchable, attackRangeTemp, combatStyle,
-                    skillReqMap ?: emptyMap()
+                    emptyMap()
                 )
                 val existing = parsedItems.entries.find { it.value.hashCode() == newItem.hashCode() }
 

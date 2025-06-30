@@ -1,4 +1,4 @@
-package dev.openrune.server.infobox
+package dev.openrune.wiki.infobox
 
 import java.nio.file.Path
 import kotlin.collections.set
