@@ -6,7 +6,6 @@ import dev.openrune.wiki.WikiDumper
 import dev.openrune.wiki.dumpers.Dumper
 import dev.openrune.wiki.dumpers.extractIds
 import dev.openrune.wiki.dumpers.extractValueField
-import dev.openrune.wiki.infobox.*
 import io.github.oshai.kotlinlogging.KotlinLogging
 import me.tongfei.progressbar.ProgressBarBuilder
 
