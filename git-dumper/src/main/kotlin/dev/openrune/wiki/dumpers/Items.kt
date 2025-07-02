@@ -2,12 +2,9 @@ package dev.openrune.wiki.dumpers
 
 import com.google.gson.GsonBuilder
 import dev.openrune.cache.CacheManager
-import dev.openrune.server.ServerCacheManager
 import dev.openrune.wiki.DATA_LOCATION
 import dev.openrune.wiki.EncodingSettings
 import dev.openrune.wiki.WikiDumper
-import dev.openrune.wiki.dumpers.extractIds
-import dev.openrune.wiki.dumpers.extractValueField
 import dev.openrune.wiki.dumpers.impl.Items as ItemParser
 import dev.openrune.wiki.dumpers.impl.WorldItemSpawns
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -66,7 +63,7 @@ object Items {
     }
 
     fun writeServerData() {
-        val completeItems = ServerCacheManager.getItems()
+        val completeItems = CacheManager.getItems()
         val jsonDir = ITEM_LOCATION.resolve("items-server-json").apply { createDirectories() }
 
         ITEM_LOCATION.resolve("items-complete.json").toFile()

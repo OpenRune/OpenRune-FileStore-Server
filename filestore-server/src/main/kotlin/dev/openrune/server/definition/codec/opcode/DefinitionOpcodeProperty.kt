@@ -3,7 +3,6 @@ package dev.openrune.server.definition.codec.opcode
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.KProperty1
 
-// Unified getter/setter helpers
 fun <T, R> KMutableProperty1<T, R?>.toGetterSetter(): Pair<(T) -> R?, (T, R) -> Unit> =
     ({ receiver: T -> this.get(receiver) }) to ({ receiver: T, value: R -> this.set(receiver, value) })
 
@@ -17,14 +16,31 @@ fun <T, R> KProperty1<T, R?>.toGetterSetter(customSetter: ((T, R) -> Unit)? = nu
 
 fun <T, R> DefinitionOpcode(
     opcode: Int,
-    type: OpcodeType,
+    type: OpcodeType<R>,
+    propertyChain: PropertyChain<T, R>
+): DefinitionOpcode<T> {
+    val (getter, setter) = propertyChain.toGetterSetter()
+    return DefinitionOpcode(opcode, type, getter, setter)
+}
+
+fun <T, R> DefinitionOpcode(
+    opcode: Int,
+    type: OpcodeType<R>,
+    getterSetter: Pair<(T) -> R?, (T, R) -> Unit>
+): DefinitionOpcode<T> {
+    val (getter, setter) = getterSetter
+    return DefinitionOpcode(opcode, type, getter, setter)
+}
+
+fun <T, R> DefinitionOpcode(
+    opcode: Int,
+    type: OpcodeType<R>,
     getter: (T) -> R?,
     setter: (T, R) -> Unit
 ): DefinitionOpcode<T> = DefinitionOpcode(
     opcode,
     decode = { buf, def, _ ->
-        @Suppress("UNCHECKED_CAST")
-        val value = type.read(buf) as R
+        val value = type.read(buf)
         setter(def, value)
     },
     encode = { buf, def ->
@@ -35,7 +51,7 @@ fun <T, R> DefinitionOpcode(
 
 fun <T, R> DefinitionOpcode(
     opcode: Int,
-    type: OpcodeType,
+    type: OpcodeType<R>,
     property: KMutableProperty1<T, R?>
 ): DefinitionOpcode<T> {
     val (getter, setter) = property.toGetterSetter()
@@ -44,7 +60,7 @@ fun <T, R> DefinitionOpcode(
 
 fun <T, R> DefinitionOpcode(
     opcode: Int,
-    type: OpcodeType,
+    type: OpcodeType<R>,
     property: KProperty1<T, R?>,
     customSetter: ((T, R) -> Unit)? = null
 ): DefinitionOpcode<T> {

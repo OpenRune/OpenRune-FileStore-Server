@@ -39,7 +39,6 @@ object ServerCacheManager {
             HealthBarDecoder().load(cache, healthBars)
             NpcDecoder().load(cache, npcs)
             ItemDecoder().load(cache, items)
-            items.forEach { it.value.build() }
             SequenceDecoder().load(cache,sequences)
             VarBitDecoder().load(cache, varbits)
             VarDecoder().load(cache, varps)

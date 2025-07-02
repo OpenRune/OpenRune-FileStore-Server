@@ -9,19 +9,22 @@ import dev.openrune.cache.CacheManager
 import dev.openrune.definition.*
 import dev.openrune.definition.codec.*
 import dev.openrune.server.definition.codec.ConfigDefinitionDecoder
+import dev.openrune.server.impl.item.ItemRenderDataManager
+import dev.openrune.server.infobox.InfoBoxItem
+import dev.openrune.server.infobox.Load
 
 fun main(args: Array<String>) {
 
     val cache = CacheDelegate(CacheLibrary("E:\\RSPS\\Hazy\\HazyGameServer\\data\\cache"))
     CacheManager.init(OsrsCacheProvider(cache,231))
 
-    println(CacheManager.getObject(29662))
-
     val codec = ObjectServerCodec(CacheManager.getObjects())
     val codec2 = HealthBarServerCodec(CacheManager.getHealthBars())
     val codec3 = SequenceServerCodec(CacheManager.getAnims())
     val codec4 = NpcServerCodec(CacheManager.getNpcs())
-    val codec5 = ItemServerCodec(CacheManager.getItems())
+    val codec5 = ItemServerCodec(CacheManager.getItems(),CacheManager.getEnums(),InfoBoxItem.load(Load.getDefaultResourceTempFile("items.json")))
+
+    ItemRenderDataManager.init()
 
     CacheManager.getObjects().forEach {
         cache.write(CONFIGS,55,it.key,codec.encodeToBuffer(ObjectServerType(it.key)))
@@ -45,14 +48,18 @@ fun main(args: Array<String>) {
         cache.write(CONFIGS,59,it.key,codec5.encodeToBuffer(ItemServerType(it.key)))
     }
 
-
-
     cache.library.update()
 
     ServerCacheManager.init(cache)
 
-    ServerCacheManager.getItems().filter { it.value.name.contains("longsword") }.forEach {
-        println(it.value.equipment?.stats)
+    ServerCacheManager.getItems().filter { it.key == 1 }.forEach {
+        println("--------------------")
+        println(it.value)
+    }
+
+    ServerCacheManager.getItems().filter { it.key == 1305 }.forEach {
+        println("--------------------")
+        println(it.value)
     }
 
 

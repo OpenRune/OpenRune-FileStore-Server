@@ -21,4 +21,18 @@ abstract class ItemServerBase : Definition {
     open var appearanceOverride2: Int = -1
     open var params: MutableMap<String, Any>? = null
     val slot: Int = -1
+
+    val stackable: Boolean
+        get() = stacks == 1 || noteTemplateId > 0
+
+    val noted: Boolean
+        get() = noteTemplateId > 0
+
+    /**
+     * Whether or not the object is a placeholder.
+     */
+    val isPlaceholder
+        get() = placeholderTemplate > 0 && placeholderLink > 0
+
+
 }

@@ -2,7 +2,6 @@ package dev.openrune.wiki.dumpers
 
 import com.google.gson.GsonBuilder
 import dev.openrune.cache.CacheManager
-import dev.openrune.server.ServerCacheManager
 import dev.openrune.wiki.DATA_LOCATION
 import dev.openrune.wiki.EncodingSettings
 import dev.openrune.wiki.dumpers.impl.Npcs;
@@ -41,7 +40,7 @@ object Npcs {
     }
 
     fun writeServerData() {
-        val completeObjects = ServerCacheManager.getObjects()
+        val completeObjects = CacheManager.getObjects()
         val jsonDir = NPC_LOCATION.resolve("npcs-server-json").apply { createDirectories() }
 
         NPC_LOCATION.resolve("npcs-complete.json").toFile()

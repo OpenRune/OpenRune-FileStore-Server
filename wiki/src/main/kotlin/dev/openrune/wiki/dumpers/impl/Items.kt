@@ -9,7 +9,7 @@ import dev.openrune.wiki.dumpers.Dumper
 import dev.openrune.wiki.dumpers.extractIds
 import dev.openrune.wiki.dumpers.extractValueField
 import dev.openrune.wiki.dumpers.GrandExchangePrices
-import dev.openrune.wiki.infobox.InfoBoxItem
+import dev.openrune.server.infobox.InfoBoxItem
 import io.github.oshai.kotlinlogging.KotlinLogging
 import me.tongfei.progressbar.ProgressBarBuilder
 import java.lang.reflect.Type

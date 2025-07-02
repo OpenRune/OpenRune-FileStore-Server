@@ -1,3 +1,3 @@
 dependencies {
-    implementation("io.netty:netty-all:5.0.0.Alpha2")
+    implementation("io.netty:netty-buffer:4.1.107.Final")
 }

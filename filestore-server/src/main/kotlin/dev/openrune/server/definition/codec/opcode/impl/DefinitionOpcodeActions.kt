@@ -1,7 +1,5 @@
 package dev.openrune.server.definition.codec.opcode.impl
 
-import dev.openrune.definition.util.readString
-import dev.openrune.definition.util.writeString
 import dev.openrune.server.definition.codec.opcode.DefinitionOpcode
 import dev.openrune.server.definition.codec.opcode.OpcodeType
 import dev.openrune.server.definition.codec.opcode.toGetterSetter
@@ -10,7 +8,7 @@ import kotlin.reflect.KProperty1
 
 fun <T, R> DefinitionOpcodeListActions(
     opcode: Int,
-    type: OpcodeType,
+    type: OpcodeType<R>,
     getter: (T) -> List<R?>?,
     setter: (T, List<R?>) -> Unit,
     expectedSize: Int
@@ -22,8 +20,7 @@ fun <T, R> DefinitionOpcodeListActions(
         repeat(count) {
             val index = buf.readUnsignedByte().toInt()
             require(index in 0 until expectedSize) { "Index $index out of bounds for list of size $expectedSize" }
-            @Suppress("UNCHECKED_CAST")
-            list[index] = type.read(buf) as R
+            list[index] = type.read(buf)
         }
         setter(def, list)
     },
@@ -33,16 +30,17 @@ fun <T, R> DefinitionOpcodeListActions(
         buf.writeByte(nonNullItems.size)
         for ((index, value) in nonNullItems) {
             buf.writeByte(index)
-            type.write(buf, value as Any)
+            type.write(buf, value!!)
         }
     },
     shouldEncode = { def ->
         getter(def)?.any { it != null } == true
     }
 )
+
 fun <T, R> DefinitionOpcodeListActions(
     opcode: Int,
-    type: OpcodeType,
+    type: OpcodeType<R>,
     property: KProperty1<T, List<R?>?>,
     expectedSize: Int,
     customSetter: ((T, List<R?>) -> Unit)? = null

@@ -8,17 +8,16 @@ import kotlin.reflect.KProperty1
 
 fun <T, R> DefinitionOpcodeList(
     opcode: Int,
-    type: OpcodeType,
+    type: OpcodeType<R>,
     getter: (T) -> List<R>?,
     setter: (T, List<R>) -> Unit
 ): DefinitionOpcode<T> = DefinitionOpcode(
     opcode,
     decode = { buf, def, _ ->
         val count = buf.readUnsignedByte().toInt()
-        val list = buildList(count) {
+        val list = buildList<R>(count) {
             repeat(count) {
-                @Suppress("UNCHECKED_CAST")
-                add(type.read(buf) as R)
+                add(type.read(buf))
             }
         }
         setter(def, list)
@@ -26,14 +25,14 @@ fun <T, R> DefinitionOpcodeList(
     encode = { buf, def ->
         val list = getter(def)
         buf.writeByte(list?.size ?: 0)
-        list?.forEach { type.write(buf, it as Any) }
+        list?.forEach { type.write(buf, it) }
     },
     shouldEncode = { getter(it)?.isNotEmpty() == true }
 )
 
 fun <T, R> DefinitionOpcodeList(
     opcode: Int,
-    type: OpcodeType,
+    type: OpcodeType<R>,
     property: KProperty1<T, List<R>?>,
     customSetter: ((T, List<R>) -> Unit)? = null
 ): DefinitionOpcode<T> {

@@ -6,7 +6,7 @@ plugins {
 }
 
 val buildDirectory = "E:\\RSPS\\OpenRune\\hosting"
-val buildNumber = "0.3"
+val buildNumber = "0.5"
 
 group = "dev.or2"
 version = buildNumber
@@ -32,7 +32,7 @@ subprojects {
     }
 
     dependencies {
-        implementation("dev.or2:all:2.1")
+        implementation("dev.or2:all:2.2")
         implementation("com.google.code.gson:gson:2.10.1")
         implementation("me.tongfei:progressbar:0.9.2")
         implementation("io.github.oshai:kotlin-logging-jvm:7.0.3")

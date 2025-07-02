@@ -6,5 +6,4 @@ include("wiki")
 include("filestore-server")
 include("filestore-server-osrs")
 include("git-dumper")
-include("filestore-server:filestore-server-osrs")
 findProject(":filestore-server:filestore-server-osrs")?.name = "filestore-server-osrs"
