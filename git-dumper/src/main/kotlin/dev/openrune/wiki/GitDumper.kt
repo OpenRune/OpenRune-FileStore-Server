@@ -7,8 +7,8 @@ import dev.openrune.cache.tools.OpenRS2
 import dev.openrune.cache.util.stringToTimestamp
 import dev.openrune.cache.util.toEchochUTC
 import dev.openrune.filesystem.Cache
-import dev.openrune.server.ServerCacheManager
-import dev.openrune.server.ServerCacheManager.buildServerCacheConfig
+import dev.openrune.ServerCacheManager
+import dev.openrune.ServerCacheManager.buildServerCacheConfig
 import dev.openrune.wiki.RunescapeWikiExporter
 import dev.openrune.wiki.WikiDumper
 import dev.openrune.wiki.dumpers.Items
