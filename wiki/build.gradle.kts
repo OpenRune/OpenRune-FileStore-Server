@@ -1,5 +1,5 @@
 dependencies {
-    api(project(":filestore-server"))
+    api(project(":filestore-server-osrs"))
     
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
     implementation("org.apache.commons:commons-compress:1.26.0")

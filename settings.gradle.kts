@@ -3,7 +3,7 @@ plugins {
 }
 rootProject.name = "OpenRune-FileStore-Server"
 include("wiki")
-include("filestore-server")
+include("definition-opcodes")
 include("filestore-server-osrs")
 include("git-dumper")
 findProject(":filestore-server:filestore-server-osrs")?.name = "filestore-server-osrs"

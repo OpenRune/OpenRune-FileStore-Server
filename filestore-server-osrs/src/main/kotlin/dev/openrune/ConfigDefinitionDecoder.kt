@@ -1,9 +1,10 @@
-package dev.openrune.server.definition.codec
+package dev.openrune
 
 import dev.openrune.Index.CONFIGS
 import dev.openrune.cache.filestore.definition.DefinitionDecoder
 import dev.openrune.cache.filestore.definition.DefinitionTransform
 import dev.openrune.definition.Definition
+import dev.openrune.server.definition.codec.CacheDefinitionCodec
 
 abstract class ConfigDefinitionDecoder<T : Definition>(
     codec: CacheDefinitionCodec<T>,

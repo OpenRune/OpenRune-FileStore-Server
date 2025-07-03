@@ -7,7 +7,6 @@ import dev.openrune.definition.*
 import dev.openrune.definition.codec.*
 import dev.openrune.definition.type.*
 import dev.openrune.filesystem.Cache
-import dev.openrune.server.definition.codec.ConfigDefinitionDecoder
 import java.nio.BufferUnderflowException
 
 class ObjectDecoder : ConfigDefinitionDecoder<ObjectServerType>(ObjectServerCodec(), 55)
