@@ -1,12 +1,12 @@
 package dev.openrune.wiki.dumpers.impl
 
+import com.github.michaelbull.logging.InlineLogger
 import dev.openrune.wiki.EncodingSettings
 import dev.openrune.wiki.Wiki
 import dev.openrune.wiki.WikiDumper
 import dev.openrune.wiki.dumpers.Dumper
 import dev.openrune.wiki.dumpers.extractIds
 import dev.openrune.wiki.dumpers.extractValueField
-import io.github.oshai.kotlinlogging.KotlinLogging
 import me.tongfei.progressbar.ProgressBarBuilder
 
 data class ItemSpawnEntry(
@@ -17,7 +17,7 @@ data class ItemSpawnEntry(
 
 class WorldItemSpawns : Dumper {
 
-    private val logger = KotlinLogging.logger {}
+    private val logger = InlineLogger()
 
     val chunkRegex = Regex("""\d+,\d+[^,]*(?:,[^,]+)*""")
     val xyRegex = Regex("""(\d+),(\d+)""")

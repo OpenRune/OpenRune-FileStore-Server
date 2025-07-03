@@ -1,6 +1,6 @@
 package dev.openrune.wiki
 
-import io.github.oshai.kotlinlogging.KotlinLogging
+import com.github.michaelbull.logging.InlineLogger
 import kotlinx.coroutines.runBlocking
 import me.tongfei.progressbar.ProgressBar
 import me.tongfei.progressbar.ProgressBarBuilder
@@ -14,7 +14,7 @@ import java.nio.charset.StandardCharsets
 
 object RunescapeWikiExporter {
 
-    private val logger = KotlinLogging.logger {}
+    private val logger = InlineLogger()
     private var userAgent = ""
 
     fun export(exportLoc : File, userAgent : String = "OrWikiDumper-${System.currentTimeMillis()}") {

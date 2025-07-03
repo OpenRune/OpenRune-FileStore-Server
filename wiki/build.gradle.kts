@@ -7,4 +7,6 @@ dependencies {
     implementation("org.sweble.wikitext:swc-engine:3.1.9")
     implementation("com.moandjiezana.toml:toml4j:0.7.2")
     implementation("javax.xml.bind:jaxb-api:2.3.1")
+
+    implementation("me.tongfei:progressbar:0.9.2")
 }

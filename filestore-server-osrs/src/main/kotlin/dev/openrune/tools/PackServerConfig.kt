@@ -1,5 +1,6 @@
 package dev.openrune.tools
 
+import com.github.michaelbull.logging.InlineLogger
 import dev.openrune.OsrsCacheProvider
 import dev.openrune.cache.CONFIGS
 import dev.openrune.cache.CacheManager
@@ -10,10 +11,8 @@ import dev.openrune.definition.codec.*
 import dev.openrune.filesystem.Cache
 import dev.openrune.server.infobox.InfoBoxItem
 import dev.openrune.server.infobox.Load
-import io.github.oshai.kotlinlogging.KotlinLogging
 
-
-private val logger = KotlinLogging.logger {}
+private val logger = InlineLogger()
 
 class PackServerConfig : CacheTask() {
 

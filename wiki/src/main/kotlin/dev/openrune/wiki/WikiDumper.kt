@@ -1,5 +1,6 @@
 package dev.openrune.wiki
 
+import com.github.michaelbull.logging.InlineLogger
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.moandjiezana.toml.TomlWriter
@@ -12,7 +13,6 @@ import dev.openrune.cache.util.toEchochUTC
 import dev.openrune.filesystem.Cache
 import dev.openrune.wiki.dumpers.impl.*
 import dev.openrune.server.infobox.InfoBoxItem
-import io.github.oshai.kotlinlogging.KotlinLogging
 import me.tongfei.progressbar.ProgressBar
 import me.tongfei.progressbar.ProgressBarBuilder
 import java.io.File
@@ -26,7 +26,7 @@ import java.util.zip.ZipInputStream
 
 object WikiDumper {
 
-    private val logger = KotlinLogging.logger {}
+    private val logger = InlineLogger()
 
     var rev = -1
 
