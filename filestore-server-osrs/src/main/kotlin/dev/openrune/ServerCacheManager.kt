@@ -2,6 +2,7 @@ package dev.openrune
 
 import com.github.michaelbull.logging.InlineLogger
 import dev.openrune.OsrsCacheProvider.*
+import dev.openrune.cache.filestore.definition.ConfigDefinitionDecoder
 import dev.openrune.cache.getOrDefault
 import dev.openrune.definition.*
 import dev.openrune.definition.codec.*
