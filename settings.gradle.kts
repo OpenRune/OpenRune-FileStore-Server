@@ -5,5 +5,5 @@ rootProject.name = "OpenRune-FileStore-Server"
 include("wiki")
 include("definition-opcodes")
 include("filestore-server-osrs")
-include("git-dumper")
+//include("git-dumper")
 findProject(":filestore-server:filestore-server-osrs")?.name = "filestore-server-osrs"
