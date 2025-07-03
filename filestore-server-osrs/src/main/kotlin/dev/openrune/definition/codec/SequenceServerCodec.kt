@@ -2,13 +2,13 @@ package dev.openrune.definition.codec
 
 import dev.openrune.definition.SequenceServerType
 import dev.openrune.definition.type.SequenceType
-import dev.openrune.server.definition.codec.CacheDefinitionCodec
-import dev.openrune.server.definition.codec.opcode.DefinitionOpcode
-import dev.openrune.server.definition.codec.opcode.OpcodeList
-import dev.openrune.server.definition.codec.opcode.OpcodeType
+import dev.openrune.definition.opcode.OpcodeDefinitionCodec
+import dev.openrune.definition.opcode.DefinitionOpcode
+import dev.openrune.definition.opcode.OpcodeList
+import dev.openrune.definition.opcode.OpcodeType
 
 
-class SequenceServerCodec(val sequences: Map<Int, SequenceType>? = null) : CacheDefinitionCodec<SequenceServerType>() {
+class SequenceServerCodec(val sequences: Map<Int, SequenceType>? = null) : OpcodeDefinitionCodec<SequenceServerType>() {
 
     override val definitionCodec = OpcodeList<SequenceServerType>().apply {
         add(DefinitionOpcode(1, OpcodeType.USHORT, SequenceServerType::animationLength))

@@ -1,4 +1,4 @@
-package dev.openrune.server.definition.codec.opcode
+package dev.openrune.definition.opcode
 
 import io.netty.buffer.ByteBuf
 import dev.openrune.definition.util.readString

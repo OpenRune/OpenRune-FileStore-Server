@@ -1,4 +1,4 @@
-package dev.openrune.server.definition.codec.opcode.impl
+package dev.openrune.definition.opcode.impl
 
 import dev.openrune.definition.util.readSmart
 import io.netty.buffer.ByteBuf
@@ -6,7 +6,7 @@ import kotlin.reflect.KMutableProperty1
 import dev.openrune.definition.util.readUnsignedBoolean
 import dev.openrune.definition.util.readString
 import dev.openrune.definition.util.writeString
-import dev.openrune.server.definition.codec.opcode.DefinitionOpcode
+import dev.openrune.definition.opcode.DefinitionOpcode
 
 fun <T> DefinitionOpcodeTransforms(
     opcodes: IntRange,

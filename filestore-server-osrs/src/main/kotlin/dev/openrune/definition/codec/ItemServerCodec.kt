@@ -2,15 +2,15 @@ package dev.openrune.definition.codec
 
 import dev.openrune.cache.util.ItemParam
 import dev.openrune.definition.*
+import dev.openrune.definition.opcode.*
 import dev.openrune.definition.type.EnumType
 import dev.openrune.definition.type.ItemType
-import dev.openrune.server.definition.codec.CacheDefinitionCodec
 import dev.openrune.server.definition.codec.opcode.*
-import dev.openrune.server.definition.codec.opcode.OpcodeType.BOOLEAN.dataClassType
-import dev.openrune.server.definition.codec.opcode.OpcodeType.BOOLEAN.enumType
-import dev.openrune.server.definition.codec.opcode.impl.DefinitionOpcodeListActions
-import dev.openrune.server.definition.codec.opcode.impl.DefinitionOpcodeMap
-import dev.openrune.server.definition.codec.opcode.impl.DefinitionOpcodeParams
+import dev.openrune.definition.opcode.OpcodeType.BOOLEAN.dataClassType
+import dev.openrune.definition.opcode.OpcodeType.BOOLEAN.enumType
+import dev.openrune.definition.opcode.impl.DefinitionOpcodeListActions
+import dev.openrune.definition.opcode.impl.DefinitionOpcodeMap
+import dev.openrune.definition.opcode.impl.DefinitionOpcodeParams
 import dev.openrune.server.impl.item.ItemRenderDataManager
 import dev.openrune.server.impl.item.WeaponTypeRenderData
 import dev.openrune.server.impl.item.WeaponTypes
@@ -23,7 +23,7 @@ class ItemServerCodec(
     val enums : Map<Int,EnumType>?= null,
     val infoBox : Map<Int, InfoBoxItem>? = null,
 
-) : CacheDefinitionCodec<ItemServerType>() {
+) : OpcodeDefinitionCodec<ItemServerType>() {
 
     override val definitionCodec = OpcodeList<ItemServerType>().apply {
         add(DefinitionOpcode(2, OpcodeType.INT, ItemServerType::cost))
@@ -42,59 +42,86 @@ class ItemServerCodec(
         add(DefinitionOpcode(19, OpcodeType.INT, ItemServerType::appearanceOverride2))
         add(DefinitionOpcodeParams(20, ItemServerType::params))
 
-        add(DefinitionOpcode(21, OpcodeType.BYTE, propertyChain(
+        add(
+            DefinitionOpcode(21, OpcodeType.BYTE, propertyChain(
             ItemServerType::equipment,
             Equipment::slot,
-        )))
+        )
+            )
+        )
 
-        add(DefinitionOpcode(22, OpcodeType.SHORT, propertyChain(
+        add(
+            DefinitionOpcode(22, OpcodeType.SHORT, propertyChain(
             ItemServerType::weapon,
             Weapon::specAmount
-        )))
+        )
+            )
+        )
 
-        add(DefinitionOpcode(23, OpcodeType.BYTE, propertyChain(
+        add(
+            DefinitionOpcode(23, OpcodeType.BYTE, propertyChain(
             ItemServerType::weapon,
             Weapon::attackRange
-        )))
+        )
+            )
+        )
 
-        add(DefinitionOpcode(24, OpcodeType.BYTE, propertyChain(
+        add(
+            DefinitionOpcode(24, OpcodeType.BYTE, propertyChain(
             ItemServerType::weapon,
             Weapon::attackSpeed
-        )))
+        )
+            )
+        )
 
-        add(DefinitionOpcodeMap(25, OpcodeType.STRING, OpcodeType.INT,propertyChain(
+        add(
+            DefinitionOpcodeMap(25, OpcodeType.STRING, OpcodeType.INT, propertyChain(
             ItemServerType::equipment,
             Equipment::requirements
-        )))
+        )
+            )
+        )
 
         add(DefinitionOpcode(26, OpcodeType.STRING, ItemServerType::examine))
         add(DefinitionOpcode(27, OpcodeType.STRING, ItemServerType::destroy))
         add(DefinitionOpcode(28, OpcodeType.BOOLEAN, ItemServerType::alchable))
         add(DefinitionOpcode(29, OpcodeType.INT, ItemServerType::exchangeCost))
 
-        add(DefinitionOpcodeMap(30, OpcodeType.STRING, OpcodeType.INT,propertyChain(
+        add(
+            DefinitionOpcodeMap(30, OpcodeType.STRING, OpcodeType.INT, propertyChain(
             ItemServerType::equipment,
             Equipment::requirements
-        )))
+        )
+            )
+        )
 
 
-        add(DefinitionOpcode(31, enumType<WeaponTypes>(),propertyChain(
+        add(
+            DefinitionOpcode(31, enumType<WeaponTypes>(), propertyChain(
             ItemServerType::weapon,
             Weapon::weaponType
-        )))
+        )
+            )
+        )
 
-        add(DefinitionOpcode(32, dataClassType<WeaponTypeRenderData>(), propertyChain(
+        add(
+            DefinitionOpcode(32, dataClassType<WeaponTypeRenderData>(), propertyChain(
             ItemServerType::weapon,
             Weapon::weaponTypeRenderData
-        )))
+        )
+            )
+        )
 
         ItemParam.entries.forEachIndexed { index, itemParam ->
             if (itemParam.toProperty() != null) {
-                add(DefinitionOpcode(33 + index, OpcodeType.BYTE, propertyChain(
+                add(
+                    DefinitionOpcode(33 + index, OpcodeType.BYTE, propertyChain(
                     ItemServerType::equipment,
                     Equipment::stats,
                     itemParam.toProperty()!!
-                )))
+                )
+                    )
+                )
             }
         }
 

@@ -1,25 +1,24 @@
 package dev.openrune.definition
 
-import dev.openrune.server.definition.ItemServerBase
 import dev.openrune.server.impl.item.WeaponTypeRenderData
 import dev.openrune.server.impl.item.WeaponTypes
 
 data class ItemServerType(
     override var id: Int = -1,
-    override var cost: Int = -1,
-    override var name: String = "",
-    override var weight: Double = 0.0,
-    override var isTradeable: Boolean = false,
-    override var category: Int = -1,
-    override var options: MutableList<String?> = mutableListOf(null, null, "Take", null, null),
-    override var interfaceOptions: MutableList<String?> = mutableListOf(null, null, null, null, "Drop"),
-    override var noteLinkId: Int = -1,
-    override var noteTemplateId: Int = -1,
-    override var placeholderLink: Int = -1,
-    override var placeholderTemplate: Int = -1,
-    override var stacks: Int = 0,
-    override var appearanceOverride1: Int = -1,
-    override var appearanceOverride2: Int = -1,
+    var cost: Int = -1,
+    var name: String = "",
+    var weight: Double = 0.0,
+    var isTradeable: Boolean = false,
+    var category: Int = -1,
+    var options: MutableList<String?> = mutableListOf(null, null, "Take", null, null),
+    var interfaceOptions: MutableList<String?> = mutableListOf(null, null, null, null, "Drop"),
+    var noteLinkId: Int = -1,
+    var noteTemplateId: Int = -1,
+    var placeholderLink: Int = -1,
+    var placeholderTemplate: Int = -1,
+    var stacks: Int = 0,
+    var appearanceOverride1: Int = -1,
+    var appearanceOverride2: Int = -1,
     var examine : String = "",
     var destroy: String = "",
     var alchable: Boolean = true,
@@ -27,8 +26,24 @@ data class ItemServerType(
 
     var equipment: Equipment? = null,
     var weapon: Weapon? = null,
-    override var params: MutableMap<String, Any>? = null
-) : ItemServerBase()
+    var params: MutableMap<String, Any>? = null,
+) : Definition {
+    var equipSlot: Int = -1
+
+    val slot: Int = -1
+
+    val stackable: Boolean
+        get() = stacks == 1 || noteTemplateId > 0
+
+    val noted: Boolean
+        get() = noteTemplateId > 0
+
+    /**
+     * Whether or not the object is a placeholder.
+     */
+    val isPlaceholder
+        get() = placeholderTemplate > 0 && placeholderLink > 0
+}
 
 data class EquipmentStats(
     var attackStab: Int = 0,

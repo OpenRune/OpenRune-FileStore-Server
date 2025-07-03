@@ -1,17 +1,17 @@
 package dev.openrune.wiki.dumpers.impl
 
+import com.github.michaelbull.logging.InlineLogger
 import dev.openrune.server.infobox.*
 import dev.openrune.wiki.EncodingSettings
 import dev.openrune.wiki.WikiDumper
 import dev.openrune.wiki.dumpers.Dumper
 import dev.openrune.wiki.dumpers.extractIds
 import dev.openrune.wiki.dumpers.extractValueField
-import io.github.oshai.kotlinlogging.KotlinLogging
 import me.tongfei.progressbar.ProgressBarBuilder
 
 class Npcs : Dumper {
 
-    private val logger = KotlinLogging.logger {}
+    private val logger = InlineLogger()
     private val npcMap = mutableMapOf<Int, InfoBoxNpc>()
 
     override fun name() = "npcs"

@@ -1,13 +1,12 @@
-package dev.openrune.server.definition.codec
+package dev.openrune.definition.opcode
 
 import dev.openrune.definition.Definition
 import dev.openrune.definition.DefinitionCodec
 import dev.openrune.definition.util.toArray
-import dev.openrune.server.definition.codec.opcode.OpcodeList
 import io.netty.buffer.ByteBuf
 import io.netty.buffer.Unpooled
 
-abstract class CacheDefinitionCodec<T : Definition> : DefinitionCodec<T> {
+abstract class OpcodeDefinitionCodec<T : Definition> : DefinitionCodec<T> {
     abstract val definitionCodec: OpcodeList<T>
 
     open fun T.createData() {

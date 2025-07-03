@@ -8,7 +8,6 @@ import dev.openrune.cache.CacheDelegate
 import dev.openrune.cache.CacheManager
 import dev.openrune.definition.*
 import dev.openrune.definition.codec.*
-import dev.openrune.server.definition.codec.ConfigDefinitionDecoder
 import dev.openrune.server.impl.item.ItemRenderDataManager
 import dev.openrune.server.infobox.InfoBoxItem
 import dev.openrune.server.infobox.Load

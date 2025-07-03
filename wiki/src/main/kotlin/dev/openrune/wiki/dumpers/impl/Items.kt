@@ -1,5 +1,6 @@
 package dev.openrune.wiki.dumpers.impl
 
+import com.github.michaelbull.logging.InlineLogger
 import com.google.gson.*
 import dev.openrune.cache.CacheManager
 import dev.openrune.wiki.EncodingSettings
@@ -10,7 +11,6 @@ import dev.openrune.wiki.dumpers.extractIds
 import dev.openrune.wiki.dumpers.extractValueField
 import dev.openrune.wiki.dumpers.GrandExchangePrices
 import dev.openrune.server.infobox.InfoBoxItem
-import io.github.oshai.kotlinlogging.KotlinLogging
 import me.tongfei.progressbar.ProgressBarBuilder
 import java.lang.reflect.Type
 
@@ -61,7 +61,7 @@ class InfoBoxItemSerializer : JsonSerializer<InfoBoxItem> {
 
 class Items : Dumper {
 
-    private val logger = KotlinLogging.logger {}
+    private val logger = InlineLogger()
 
     override fun name() = "items"
     var items = mutableMapOf<Int, InfoBoxItem>()

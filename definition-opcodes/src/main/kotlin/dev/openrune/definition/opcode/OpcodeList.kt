@@ -1,4 +1,4 @@
-package dev.openrune.server.definition.codec.opcode
+package dev.openrune.definition.opcode
 
 class OpcodeList<T> {
     private val _opcodes = mutableListOf<DefinitionOpcode<T>>()
