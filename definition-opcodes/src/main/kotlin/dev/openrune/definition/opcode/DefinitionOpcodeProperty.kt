@@ -1,4 +1,4 @@
-package dev.openrune.server.definition.codec.opcode
+package dev.openrune.definition.opcode
 
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.KProperty1

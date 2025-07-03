@@ -2,16 +2,16 @@ package dev.openrune.definition.codec
 
 import dev.openrune.definition.ObjectServerType
 import dev.openrune.definition.type.ObjectType
-import dev.openrune.server.definition.codec.CacheDefinitionCodec
-import dev.openrune.server.definition.codec.opcode.DefinitionOpcode
-import dev.openrune.server.definition.codec.opcode.OpcodeList
-import dev.openrune.server.definition.codec.opcode.OpcodeType
-import dev.openrune.server.definition.codec.opcode.impl.DefinitionOpcodeListActions
-import dev.openrune.server.definition.codec.opcode.impl.DefinitionOpcodeParams
-import dev.openrune.server.definition.codec.opcode.impl.DefinitionOpcodeTransforms
+import dev.openrune.definition.opcode.OpcodeDefinitionCodec
+import dev.openrune.definition.opcode.DefinitionOpcode
+import dev.openrune.definition.opcode.OpcodeList
+import dev.openrune.definition.opcode.OpcodeType
+import dev.openrune.definition.opcode.impl.DefinitionOpcodeListActions
+import dev.openrune.definition.opcode.impl.DefinitionOpcodeParams
+import dev.openrune.definition.opcode.impl.DefinitionOpcodeTransforms
 
 
-class ObjectServerCodec(val objects: Map<Int, ObjectType>? = null) : CacheDefinitionCodec<ObjectServerType>() {
+class ObjectServerCodec(val objects: Map<Int, ObjectType>? = null) : OpcodeDefinitionCodec<ObjectServerType>() {
 
     override val definitionCodec = OpcodeList<ObjectServerType>().apply {
         add(DefinitionOpcode(1, OpcodeType.STRING, ObjectServerType::name))

@@ -1,8 +1,8 @@
-package dev.openrune.server.definition.codec.opcode.impl
+package dev.openrune.definition.opcode.impl
 
-import dev.openrune.server.definition.codec.opcode.DefinitionOpcode
-import dev.openrune.server.definition.codec.opcode.OpcodeType
-import dev.openrune.server.definition.codec.opcode.PropertyChain
+import dev.openrune.definition.opcode.DefinitionOpcode
+import dev.openrune.definition.opcode.OpcodeType
+import dev.openrune.definition.opcode.PropertyChain
 
 fun <T, K, V> DefinitionOpcodeMap(
     opcode: Int,
