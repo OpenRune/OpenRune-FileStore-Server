@@ -5,7 +5,6 @@ import dev.openrune.definition.*
 import dev.openrune.definition.opcode.*
 import dev.openrune.definition.type.EnumType
 import dev.openrune.definition.type.ItemType
-import dev.openrune.server.definition.codec.opcode.*
 import dev.openrune.definition.opcode.OpcodeType.BOOLEAN.dataClassType
 import dev.openrune.definition.opcode.OpcodeType.BOOLEAN.enumType
 import dev.openrune.definition.opcode.impl.DefinitionOpcodeListActions

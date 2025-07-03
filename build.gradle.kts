@@ -32,7 +32,7 @@ subprojects {
     }
 
     dependencies {
-        implementation("dev.or2:all:2.2")
+        implementation("dev.or2:all:2.2.1")
         implementation("com.michael-bull.kotlin-inline-logger:kotlin-inline-logger:1.0.3")
     }
 
