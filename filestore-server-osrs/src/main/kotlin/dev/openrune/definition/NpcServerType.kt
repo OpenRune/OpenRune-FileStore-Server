@@ -17,7 +17,7 @@ data class NpcServerType(
     var varp: Int = -1,
     var transforms: MutableList<Int>? = null,
     var combatLevel: Int = -1,
-    var hasRenderPriority: Boolean = false,
+    var renderPriority: Int = 0,
     var lowPriorityFollowerOps: Boolean = false,
     var isFollower: Boolean = false,
     var runSequence: Int = -1,

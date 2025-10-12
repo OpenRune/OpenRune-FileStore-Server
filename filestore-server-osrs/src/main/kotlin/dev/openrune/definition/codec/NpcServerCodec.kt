@@ -27,7 +27,7 @@ class NpcServerCodec(val npcs: Map<Int, NpcType>? = null) : OpcodeDefinitionCode
         add(DefinitionOpcodeListActions(11, OpcodeType.STRING, NpcServerType::actions, 5))
         add(DefinitionOpcodeTransforms(IntRange(12, 13), NpcServerType::transforms, NpcServerType::varbit, NpcServerType::varp))
         add(DefinitionOpcode(14, OpcodeType.INT, NpcServerType::combatLevel))
-        add(DefinitionOpcode(15, OpcodeType.BOOLEAN, NpcServerType::hasRenderPriority))
+        add(DefinitionOpcode(15, OpcodeType.INT, NpcServerType::renderPriority))
         add(DefinitionOpcode(16, OpcodeType.BOOLEAN, NpcServerType::lowPriorityFollowerOps))
         add(DefinitionOpcode(17, OpcodeType.BOOLEAN, NpcServerType::isFollower))
         add(DefinitionOpcode(18, OpcodeType.INT, NpcServerType::runSequence))
@@ -68,7 +68,7 @@ class NpcServerCodec(val npcs: Map<Int, NpcType>? = null) : OpcodeDefinitionCode
         varp = obj.varp
         transforms = obj.transforms
         combatLevel = obj.combatLevel
-        hasRenderPriority = obj.hasRenderPriority
+        renderPriority = obj.renderPriority
         lowPriorityFollowerOps = obj.lowPriorityFollowerOps
         isFollower = obj.isFollower
         runSequence = obj.runSequence
