@@ -74,6 +74,7 @@ object RunescapeWikiExporter {
             .userAgent(userAgent)
             .header("Accept-Language", "en-US,en;q=0.5")
             .get()
+
         val form: FormElement = doc.select("form").first { it.attr("action") == "/w/Special:Export" } as FormElement
         val text = form.select("textarea").first { it.attr("name") == "pages" }
         text.`val`(pages)

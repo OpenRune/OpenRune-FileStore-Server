@@ -3,6 +3,7 @@ package dev.openrune.server.impl.item
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.io.BufferedReader
+import java.io.InputStream
 import java.io.InputStreamReader
 
 data class WeaponTypeRenderDataFull(
@@ -71,12 +72,10 @@ object ItemRenderDataManager {
 
     private val weaponTypeRenderDataFullMap: MutableMap<Int, WeaponTypeRenderDataFull> = mutableMapOf()
 
-    fun init() {
+    fun init(input : InputStream = javaClass.classLoader.getResourceAsStream("itemRenderData.json")) {
         val gson = Gson()
 
-        val inputStream = javaClass.classLoader.getResourceAsStream("itemRenderData.json")
-            ?: throw IllegalArgumentException("File not found in resources: itemRenderData.json")
-        val reader = BufferedReader(InputStreamReader(inputStream))
+        val reader = BufferedReader(InputStreamReader(input))
 
         val mapType = object : TypeToken<Map<Int, WeaponTypeRenderDataFull>>() {}.type
         val deserializedMap: Map<Int, WeaponTypeRenderDataFull> = gson.fromJson(reader.readText(), mapType)
