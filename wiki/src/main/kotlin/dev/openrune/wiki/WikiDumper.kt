@@ -39,8 +39,8 @@ object WikiDumper {
     @JvmStatic
     fun main(args: Array<String>) {
 
-        val cache = Path.of("C:\\Users\\Home\\Desktop\\dump\\cache").toFile()
-        getBaseLocation = Path.of("C:\\Users\\Home\\Desktop\\dump\\").toFile()
+        val cache = Path.of("C:\\Users\\Home\\Desktop\\Alter-feature-support-231\\Alter-feature-support-231\\data\\cache").toFile()
+        getBaseLocation = Path.of("C:\\Users\\Home\\Desktop\\Wiki Dump").toFile()
         wikiLocation = File(getBaseLocation,"wiki/wiki.xml")
 
         rev = 230

@@ -213,7 +213,8 @@ object RunescapeWikiExporter {
     }
 
     private fun getAllPages(list: MutableList<String>, wiki: String, url: String): List<String> {
-        val doc = Jsoup.connect("https://${wiki}$url").userAgent(userAgent)
+        val doc = Jsoup.connect("https://${wiki}$url")
+            .userAgent(userAgent)
             .header("Accept-Language", "en-US,en;q=0.5")
             .get()
 
@@ -221,10 +222,15 @@ object RunescapeWikiExporter {
         for (ele in elements) {
             list.add(ele.attr("title"))
         }
-        val next = doc.select("div[class$=mw-allpages-nav] a").firstOrNull { it.text().startsWith("Next page") }
+
+        val next = doc.select("div[class$=mw-allpages-nav] a")
+            .firstOrNull { it.text().startsWith("Next page") }
+
         if (next != null) {
+            Thread.sleep(500)
             getAllPages(list, wiki, next.attr("href"))
         }
+
         return list
     }
 
