@@ -89,7 +89,7 @@ object WikiDumper {
 
         if ((cache.listFiles()?.count { it.name == "main_file_cache.dat2" } ?: 0) == 0) {
 
-            OpenRS2.downloadCacheByRevision(rev,cache, listener =  object : DownloadListener {
+            OpenRS2.downloadCacheByRevision(rev,cache, environment = CacheEnvironment.LIVE, listener =  object : DownloadListener {
                 var progressBar: ProgressBar? = null
 
                 override fun onProgress(progress: Int, max: Long, current: Long) {
