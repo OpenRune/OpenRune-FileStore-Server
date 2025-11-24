@@ -1,27 +1,20 @@
-package dev.openrune.wiki.skillchances
+package dev.openrune.wiki.dumpers.impl
 
-import com.google.gson.GsonBuilder
-import dev.openrune.cache.gameval.GameValHandler
-import dev.openrune.definition.GameValGroupTypes.*
-import dev.openrune.filesystem.Cache
-import dev.openrune.wiki.Wiki
+import dev.openrune.wiki.EncodingSettings
+import dev.openrune.wiki.WikiDumper
+import dev.openrune.wiki.dumpers.Dumper
 import dev.openrune.wiki.dumpers.extractIds
-import java.io.File
+import kotlin.sequences.forEach
 
-object SkillChanceDumper {
+class SkillChances: Dumper {
+    data class SkillChance(val title: String, val names: List<String> = mutableListOf(), val entries: List<Map<String, Any>>)
 
-    @JvmStatic
-    fun main(args: Array<String>) {
+    private val chances = mutableListOf<SkillChance>()
 
-        val cachePath = "C:\\Users\\Advo\\Downloads\\cache-oldschool-live-en-b231-2025-07-02-10-45-05-openrs2#2223\\cache"
-        val cache = Cache.load(java.nio.file.Path.of(cachePath))
-        val objects = GameValHandler.readGameVal(LOCTYPES, cache)
-        val npcs = GameValHandler.readGameVal(NPCTYPES, cache)
-        val items = GameValHandler.readGameVal(OBJTYPES, cache)
-        val filePath = "C:\\Users\\Advo\\Downloads\\OpenRune-FileStore-Server-dump\\wiki\\data\\wiki.xml"
-        val wiki = Wiki.load(filePath)
+    override fun name(): String = "skillchances"
 
-        val pages = wiki.pages
+    override fun parseItem() {
+        val pages = WikiDumper.wiki.pages
             .asSequence()
             .filter { it.namespace.key == 0 }
             .filter {
@@ -29,7 +22,6 @@ object SkillChanceDumper {
                 text.contains("skilling success chart")
             }
 
-        val toExport = mutableListOf<SkillChance>()
         pages.forEach { page ->
             val template = page.getTemplateMaps("skilling success chart")
             val templatesInfoBox = page.getTemplateMaps("infobox item")
@@ -44,7 +36,7 @@ object SkillChanceDumper {
                     extractIds(templateItem, i, ids)
                 }
                 ids.forEach { (id, keyIndex) ->
-                    names.add("items."+items[id].name)
+                    names.add("items."+WikiDumper.itemGameVals!![id].name)
                 }
             }
             val templatesNpc = buildList {
@@ -60,7 +52,7 @@ object SkillChanceDumper {
                         extractIds(templateNpc, i, ids)
                     }
                     ids.forEach { (id, keyIndex) ->
-                        names.add("npcs."+npcs[id].name)
+                        names.add("npcs."+WikiDumper.npcGameVals!![id].name)
                     }
                 }
             }
@@ -76,12 +68,12 @@ object SkillChanceDumper {
                         extractIds(templateObject, i, ids)
                     }
                     ids.forEach { (id, keyIndex) ->
-                        names.add("objects."+objects[id].name)
+                        names.add("objects."+ WikiDumper.objectGameVals!![id].name)
                     }
                 }
             }
             if(template.size > 0) {
-                toExport.add(SkillChance(
+                chances.add(SkillChance(
                     title = page.title,
                     names = names,
                     entries = template
@@ -89,12 +81,9 @@ object SkillChanceDumper {
 
             }
         }
+    }
 
-        val gson = GsonBuilder()
-            .setPrettyPrinting()
-            .disableHtmlEscaping()
-            .create()
-
-        File("skillchances.json").writeText(gson.toJson(toExport))
+    override fun toWrite(encodingSettings: EncodingSettings): Any {
+        return chances
     }
 }
