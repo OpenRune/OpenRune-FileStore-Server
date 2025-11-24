@@ -6,10 +6,15 @@ import com.google.gson.GsonBuilder
 import com.moandjiezana.toml.TomlWriter
 import dev.openrune.OsrsCacheProvider
 import dev.openrune.cache.CacheManager
+import dev.openrune.cache.gameval.GameValElement
+import dev.openrune.cache.gameval.GameValHandler
 import dev.openrune.cache.tools.*
 import dev.openrune.cache.tools.OpenRS2.allCaches
 import dev.openrune.cache.util.stringToTimestamp
 import dev.openrune.cache.util.toEchochUTC
+import dev.openrune.definition.GameValGroupTypes.LOCTYPES
+import dev.openrune.definition.GameValGroupTypes.NPCTYPES
+import dev.openrune.definition.GameValGroupTypes.OBJTYPES
 import dev.openrune.filesystem.Cache
 import dev.openrune.wiki.dumpers.impl.*
 import dev.openrune.server.infobox.InfoBoxItem
@@ -35,6 +40,9 @@ object WikiDumper {
     var wikiLocation = File(getBaseLocation,"wiki/wiki.xml")
 
     val wiki : Wiki get() = Wiki.load(wikiLocation.path)
+    var itemGameVals: List<GameValElement>? = null
+    var objectGameVals: List<GameValElement>? = null
+    var npcGameVals: List<GameValElement>? = null
 
     @JvmStatic
     fun main(args: Array<String>) {
@@ -53,7 +61,12 @@ object WikiDumper {
 
         setup()
 
-        CacheManager.init(OsrsCacheProvider(Cache.load(cache.toPath(), false), 230))
+        val fileSystem = Cache.load(cache.toPath(), false)
+        objectGameVals = GameValHandler.readGameVal(LOCTYPES, fileSystem)
+        npcGameVals = GameValHandler.readGameVal(NPCTYPES, fileSystem)
+        itemGameVals = GameValHandler.readGameVal(OBJTYPES, fileSystem)
+
+        CacheManager.init(OsrsCacheProvider(fileSystem, rev))
 
          val items = Items()
          logger.info { "Parsing Items..." }
@@ -67,9 +80,14 @@ object WikiDumper {
         logger.info { "Parsing Npcs..." }
         npcs.parseItem()
 
+        val skillChances = SkillChances()
+        logger.info { "Parsing Skill Chances..." }
+        skillChances.parseItem()
+
         writeData(encodingSettings,items.toWrite(encodingSettings), File(getBaseLocation,"items"))
         writeData(encodingSettings,npcs.toWrite(encodingSettings), File(getBaseLocation,"npcs"))
         writeData(encodingSettings,worldItemSpawns.toWrite(encodingSettings), File(getBaseLocation,"worldItemSpawns"))
+        writeData(encodingSettings,skillChances.toWrite(encodingSettings), File(getBaseLocation,"skillChances"))
     }
 
 
