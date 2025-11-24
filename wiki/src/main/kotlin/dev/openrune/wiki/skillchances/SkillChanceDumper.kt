@@ -33,9 +33,8 @@ object SkillChanceDumper {
         pages.forEach { page ->
             val template = page.getTemplateMaps("skilling success chart")
             val templatesInfoBox = page.getTemplateMaps("infobox item")
-            val itemIds = mutableListOf<String>()
-            val npcIds = mutableListOf<String>()
-            val objectIds = mutableListOf<String>()
+            //items, npcs, objects
+            val names = mutableListOf<String>()
 
             if(!templatesInfoBox.isEmpty()) {
                 val templateItem = templatesInfoBox.first()
@@ -45,7 +44,7 @@ object SkillChanceDumper {
                     extractIds(templateItem, i, ids)
                 }
                 ids.forEach { (id, keyIndex) ->
-                    itemIds.add(items[id].name)
+                    names.add("items."+items[id].name)
                 }
             }
             val templatesNpc = buildList {
@@ -61,7 +60,7 @@ object SkillChanceDumper {
                         extractIds(templateNpc, i, ids)
                     }
                     ids.forEach { (id, keyIndex) ->
-                        npcIds.add(npcs[id].name)
+                        names.add("npcs."+npcs[id].name)
                     }
                 }
             }
@@ -77,16 +76,14 @@ object SkillChanceDumper {
                         extractIds(templateObject, i, ids)
                     }
                     ids.forEach { (id, keyIndex) ->
-                        objectIds.add(objects[id].name)
+                        names.add("objects."+objects[id].name)
                     }
                 }
             }
             if(template.size > 0) {
                 toExport.add(SkillChance(
-                    itemIds = itemIds,
-                    npcIds = npcIds,
-                    objectIds = objectIds,
                     title = page.title,
+                    names = names,
                     entries = template
                 ))
 
@@ -94,7 +91,6 @@ object SkillChanceDumper {
         }
 
         val gson = GsonBuilder()
-            .registerTypeAdapter(SkillChance::class.java, SkillChanceAdapter())
             .setPrettyPrinting()
             .disableHtmlEscaping()
             .create()
