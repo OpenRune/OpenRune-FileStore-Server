@@ -47,47 +47,12 @@ object WikiDumper {
     @JvmStatic
     fun main(args: Array<String>) {
 
-        val cache = Path.of("C:\\Users\\Home\\Desktop\\Alter-feature-support-231\\Alter-feature-support-231\\data\\cache").toFile()
-        getBaseLocation = Path.of("C:\\Users\\Home\\Desktop\\Wiki Dump").toFile()
+        getBaseLocation = Path.of("D:\\OpenRune\\OpenRune-FileStore-Server/dumps").toFile()
         wikiLocation = File(getBaseLocation,"wiki/wiki.xml")
 
-        rev = 230
-
-        val encodingSettings = EncodingSettings(
-            encodeType = FileType.JSON,
-            prettyPrint = true,
-            linkedIds = false
-        )
+        rev = 238
 
         setup()
-
-        val fileSystem = Cache.load(cache.toPath(), false)
-        objectGameVals = GameValHandler.readGameVal(LOCTYPES, fileSystem)
-        npcGameVals = GameValHandler.readGameVal(NPCTYPES, fileSystem)
-        itemGameVals = GameValHandler.readGameVal(OBJTYPES, fileSystem)
-
-        CacheManager.init(OsrsCacheProvider(fileSystem, rev))
-
-         val items = Items()
-         logger.info { "Parsing Items..." }
-         items.parseItem()
-
-        val worldItemSpawns = WorldItemSpawns()
-        logger.info { "Parsing World Item Spawns..." }
-        worldItemSpawns.parseItem()
-
-        val npcs = Npcs()
-        logger.info { "Parsing Npcs..." }
-        npcs.parseItem()
-
-        val skillChances = SkillChances()
-        logger.info { "Parsing Skill Chances..." }
-        skillChances.parseItem()
-
-        writeData(encodingSettings,items.toWrite(encodingSettings), File(getBaseLocation,"items"))
-        writeData(encodingSettings,npcs.toWrite(encodingSettings), File(getBaseLocation,"npcs"))
-        writeData(encodingSettings,worldItemSpawns.toWrite(encodingSettings), File(getBaseLocation,"worldItemSpawns"))
-        writeData(encodingSettings,skillChances.toWrite(encodingSettings), File(getBaseLocation,"skillChances"))
     }
 
 
