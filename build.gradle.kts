@@ -5,8 +5,8 @@ plugins {
     id("maven-publish")
 }
 
-val buildDirectory = "E:\\RSPS\\OpenRune\\hosting"
-val buildNumber = "0.7"
+val buildDirectory = "D:\\OpenRune\\openrune-hosting"
+val buildNumber = "0.8"
 
 group = "dev.or2"
 version = buildNumber
@@ -90,6 +90,7 @@ subprojects {
                 maven {
                     url = uri(buildDirectory)
                 }
+                mavenLocal()
             }
         }
     }
