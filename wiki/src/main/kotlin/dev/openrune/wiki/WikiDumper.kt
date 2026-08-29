@@ -50,7 +50,7 @@ object WikiDumper {
         getBaseLocation = Path.of("D:\\OpenRune\\OpenRune-FileStore-Server/dumps").toFile()
         wikiLocation = File(getBaseLocation,"wiki/wiki.xml")
 
-        rev = 238
+        rev = 240
 
         setup()
     }
